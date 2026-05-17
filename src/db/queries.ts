@@ -1,5 +1,6 @@
 import { v7 as uuidv7 } from 'uuid'
 
+import { detectPrs } from '@/utils/pr-detection'
 import { getDB } from './schema'
 import type {
   Equipment,
@@ -9,6 +10,7 @@ import type {
   MuscleGroup,
   OutboxEntity,
   OutboxOp,
+  PersonalRecord,
   Routine,
   Workout,
   WorkoutSet,
@@ -214,4 +216,57 @@ export async function updateSet(set: WorkoutSet): Promise<void> {
 /** Persists a soft-deleted set (caller sets `deleted_at`). */
 export async function removeSet(set: WorkoutSet): Promise<void> {
   await persistMutation('sets', set, 'delete')
+}
+
+/* --- personal records -------------------------------------------------- */
+
+export async function createPr(pr: PersonalRecord): Promise<void> {
+  await persistMutation('prs', pr, 'create')
+}
+
+/**
+ * Detects personal records for a just-finished workout: writes a `prs` record
+ * for each and flags the achieving set `is_pr`. Called before the workout is
+ * marked completed, so the current workout is excluded from prior history.
+ */
+export async function detectWorkoutPrs(
+  workoutId: string,
+  workoutSets: WorkoutSet[],
+): Promise<void> {
+  const completedIds = new Set((await getCompletedWorkouts()).map((workout) => workout.id))
+
+  const setsByExercise = new Map<string, WorkoutSet[]>()
+  for (const set of workoutSets) {
+    const group = setsByExercise.get(set.exercise_id) ?? []
+    group.push(set)
+    setsByExercise.set(set.exercise_id, group)
+  }
+
+  for (const [exerciseId, newSets] of setsByExercise) {
+    const allSets = await getSetsByExercise(exerciseId)
+    const priorSets = allSets.filter(
+      (set) => set.workout_id !== workoutId && completedIds.has(set.workout_id),
+    )
+    for (const hit of detectPrs(newSets, priorSets)) {
+      const set = workoutSets.find((candidate) => candidate.id === hit.setId)
+      if (set === undefined) continue
+      const now = Date.now()
+      await createPr({
+        id: uuidv7(),
+        exercise_id: exerciseId,
+        type: hit.type,
+        value: hit.value,
+        weight_unit: set.weight_unit,
+        achieved_at: set.completed_at ?? now,
+        workout_id: workoutId,
+        set_id: set.id,
+        created_at: now,
+        updated_at: now,
+        deleted_at: null,
+        last_synced_at: null,
+        _v: 1,
+      })
+      if (!set.is_pr) await updateSet({ ...set, is_pr: true, updated_at: now })
+    }
+  }
 }

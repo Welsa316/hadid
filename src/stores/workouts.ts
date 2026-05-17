@@ -6,6 +6,7 @@ import type { Routine, Workout, WorkoutSet } from '@/db/schema'
 import {
   createSet,
   createWorkout,
+  detectWorkoutPrs,
   getLastSetForExercise,
   getMeta,
   getSetsByWorkout,
@@ -86,12 +87,23 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     return workout
   }
 
-  /** Completes the active workout, recording its duration, and saves it. */
-  async function finish(): Promise<void> {
+  /**
+   * Completes the active workout: detects personal records, records the
+   * summary, and saves it. Returns the finished workout's id.
+   */
+  async function finish(): Promise<string | null> {
     const workout = active.value
-    if (workout === null) return
-    const now = Date.now()
+    if (workout === null) return null
     const sets = activeSets.value
+
+    // PR detection is best-effort — a failure must not block finishing.
+    try {
+      await detectWorkoutPrs(workout.id, sets)
+    } catch (cause: unknown) {
+      console.error('[hadid] PR detection failed', cause)
+    }
+
+    const now = Date.now()
     const completed: Workout = {
       ...workout,
       status: 'completed',
@@ -109,9 +121,11 @@ export const useWorkoutsStore = defineStore('workouts', () => {
       await setMeta(ACTIVE_WORKOUT_KEY, null)
     } catch (cause: unknown) {
       active.value = workout
+      activeSets.value = sets
       console.error('[hadid] failed to finish workout', cause)
       throw cause
     }
+    return workout.id
   }
 
   /** Abandons the active workout — marks it discarded, keeps nothing. */

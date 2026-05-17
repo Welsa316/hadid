@@ -2,6 +2,7 @@
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+import PRBadge from '@/components/PRBadge.vue'
 import type { Workout, WorkoutSet } from '@/db/schema'
 import { getSetsByWorkout, getWorkout } from '@/db/queries'
 import { useExercisesStore } from '@/stores/exercises'
@@ -48,6 +49,8 @@ const exerciseGroups = computed(() => {
     }))
     .filter((group) => group.sets.length > 0)
 })
+
+const prCount = computed(() => sets.value.filter((set) => set.is_pr).length)
 </script>
 
 <template>
@@ -88,11 +91,16 @@ const exerciseGroups = computed(() => {
           </div>
         </div>
 
+        <p v-if="prCount > 0" class="detail-pr-banner">
+          {{ prCount }} new personal {{ prCount === 1 ? 'record' : 'records' }}
+        </p>
+
         <section v-for="group in exerciseGroups" :key="group.id" class="detail-exercise">
           <h2 class="detail-exercise__name">{{ group.name }}</h2>
           <div v-for="(set, index) in group.sets" :key="set.id" class="detail-set">
             <span class="detail-set__num">{{ index + 1 }}</span>
             <span class="detail-set__value">{{ set.weight }} lb × {{ set.reps }}</span>
+            <PRBadge v-if="set.is_pr" />
           </div>
         </section>
 
@@ -200,7 +208,18 @@ const exerciseGroups = computed(() => {
 }
 
 .detail-set__value {
+  flex: 1;
   font-weight: 600;
+}
+
+.detail-pr-banner {
+  margin-bottom: var(--space-4);
+  padding: var(--space-3);
+  background-color: var(--color-accent);
+  border-radius: var(--radius-md);
+  color: var(--color-on-accent);
+  font-weight: 700;
+  text-align: center;
 }
 
 .detail-notes {

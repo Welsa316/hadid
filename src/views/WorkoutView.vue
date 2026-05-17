@@ -40,8 +40,8 @@ function onPickerConfirm(ids: string[]): void {
 async function finishWorkout(): Promise<void> {
   actionError.value = null
   try {
-    await workoutsStore.finish()
-    await router.push('/')
+    const finishedId = await workoutsStore.finish()
+    await router.push(finishedId === null ? '/' : `/history/${finishedId}`)
   } catch {
     actionError.value = 'Could not finish the workout. Please try again.'
   }
