@@ -35,6 +35,11 @@ const dotColor = computed(() => {
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+  transition: background-color var(--transition-fast);
+}
+
+.exercise-card:active {
+  background-color: var(--color-surface-raised);
 }
 
 .exercise-card__dot {

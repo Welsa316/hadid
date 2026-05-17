@@ -12,6 +12,11 @@ const routes: RouteRecordRaw[] = [
   },
   { path: '/routines', name: 'routines', component: () => import('@/views/RoutinesView.vue') },
   { path: '/exercises', name: 'exercises', component: () => import('@/views/ExercisesView.vue') },
+  {
+    path: '/exercises/:id',
+    name: 'exercise-detail',
+    component: () => import('@/views/ExerciseDetailView.vue'),
+  },
   { path: '/settings', name: 'settings', component: () => import('@/views/SettingsView.vue') },
   { path: '/workout', name: 'workout', component: () => import('@/views/WorkoutView.vue') },
   { path: '/:pathMatch(.*)*', name: 'not-found', redirect: '/' },

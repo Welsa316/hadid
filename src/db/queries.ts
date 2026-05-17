@@ -196,6 +196,13 @@ export async function getLastSetForExercise(exerciseId: string): Promise<Workout
   return undefined
 }
 
+/** All non-deleted sets logged for an exercise, across every workout. */
+export async function getSetsByExercise(exerciseId: string): Promise<WorkoutSet[]> {
+  const db = await getDB()
+  const sets = await db.getAllFromIndex('sets', 'by_exercise_id', exerciseId)
+  return sets.filter((set) => set.deleted_at === null)
+}
+
 export async function createSet(set: WorkoutSet): Promise<void> {
   await persistMutation('sets', set, 'create')
 }

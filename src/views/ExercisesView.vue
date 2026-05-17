@@ -103,7 +103,9 @@ const filteredExercises = computed(() => {
 
       <ul v-if="filteredExercises.length > 0" class="exercises__list">
         <li v-for="exercise in filteredExercises" :key="exercise.id">
-          <ExerciseCard :exercise="exercise" />
+          <RouterLink :to="`/exercises/${exercise.id}`" class="exercises__link">
+            <ExerciseCard :exercise="exercise" />
+          </RouterLink>
         </li>
       </ul>
       <p v-else class="exercises__state">No exercises match your filters.</p>
@@ -191,5 +193,9 @@ const filteredExercises = computed(() => {
   flex-direction: column;
   gap: var(--space-2);
   list-style: none;
+}
+
+.exercises__link {
+  display: block;
 }
 </style>
