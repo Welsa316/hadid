@@ -83,7 +83,7 @@ const prCount = computed(() => sets.value.filter((set) => set.is_pr).length)
           </div>
           <div class="detail-stat">
             <span class="detail-stat__value">{{ workout.total_volume.toLocaleString() }}</span>
-            <span class="detail-stat__label">Volume (lb)</span>
+            <span class="detail-stat__label">Volume ({{ workout.weight_unit }})</span>
           </div>
           <div class="detail-stat">
             <span class="detail-stat__value">{{ workout.set_count }}</span>
@@ -99,7 +99,7 @@ const prCount = computed(() => sets.value.filter((set) => set.is_pr).length)
           <h2 class="detail-exercise__name">{{ group.name }}</h2>
           <div v-for="(set, index) in group.sets" :key="set.id" class="detail-set">
             <span class="detail-set__num">{{ index + 1 }}</span>
-            <span class="detail-set__value">{{ set.weight }} lb × {{ set.reps }}</span>
+            <span class="detail-set__value">{{ set.weight }} {{ set.weight_unit }} × {{ set.reps }}</span>
             <PRBadge v-if="set.is_pr" />
           </div>
         </section>

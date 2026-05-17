@@ -6,6 +6,7 @@ import ProgressChart from '@/components/ProgressChart.vue'
 import type { WorkoutSet } from '@/db/schema'
 import { getCompletedWorkouts, getSetsByExercise } from '@/db/queries'
 import { useExercisesStore } from '@/stores/exercises'
+import { useSettingsStore } from '@/stores/settings'
 
 type Metric = 'weight' | 'volume' | 'reps'
 
@@ -19,6 +20,7 @@ interface ProgressPoint {
 const route = useRoute()
 const router = useRouter()
 const exercisesStore = useExercisesStore()
+const settingsStore = useSettingsStore()
 
 const exerciseId = typeof route.params.id === 'string' ? route.params.id : ''
 const exerciseName = computed(() => exercisesStore.byId.get(exerciseId)?.name ?? 'Exercise')
@@ -35,7 +37,7 @@ const metricOptions: ReadonlyArray<{ value: Metric; label: string }> = [
 ]
 
 const chartPoints = computed(() => points.value.map((point) => ({ t: point.t, y: point[metric.value] })))
-const seriesLabel = computed(() => (metric.value === 'reps' ? 'reps' : 'lb'))
+const seriesLabel = computed(() => (metric.value === 'reps' ? 'reps' : settingsStore.unit))
 
 onMounted(async () => {
   try {

@@ -1,9 +1,12 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
+import type { WeightUnit } from '@/db/schema'
+
 export type Theme = 'dark' | 'light'
 
 const THEME_STORAGE_KEY = 'hadid:theme'
+const UNIT_STORAGE_KEY = 'hadid:unit'
 const THEME_COLORS: Record<Theme, string> = { dark: '#0f0f10', light: '#f6f6f7' }
 
 function readStoredTheme(): Theme {
@@ -16,6 +19,16 @@ function readStoredTheme(): Theme {
   return 'dark'
 }
 
+function readStoredUnit(): WeightUnit {
+  try {
+    const stored = localStorage.getItem(UNIT_STORAGE_KEY)
+    if (stored === 'lb' || stored === 'kg') return stored
+  } catch {
+    /* localStorage unavailable — use the default unit */
+  }
+  return 'lb'
+}
+
 function applyTheme(theme: Theme): void {
   document.documentElement.dataset.theme = theme
   const meta = document.querySelector('meta[name="theme-color"]')
@@ -23,12 +36,13 @@ function applyTheme(theme: Theme): void {
 }
 
 /**
- * Device-local UI preferences. The theme is kept in localStorage (not
- * IndexedDB) so it can be read synchronously before first paint and stays
- * per-device rather than syncing.
+ * Device-local UI and entry preferences. Kept in localStorage (not IndexedDB)
+ * so the theme can be read synchronously before first paint, and so each
+ * device keeps its own preferences rather than syncing.
  */
 export const useSettingsStore = defineStore('settings', () => {
   const theme = ref<Theme>(readStoredTheme())
+  const unit = ref<WeightUnit>(readStoredUnit())
   applyTheme(theme.value)
 
   function setTheme(next: Theme): void {
@@ -41,5 +55,14 @@ export const useSettingsStore = defineStore('settings', () => {
     }
   }
 
-  return { theme, setTheme }
+  function setUnit(next: WeightUnit): void {
+    unit.value = next
+    try {
+      localStorage.setItem(UNIT_STORAGE_KEY, next)
+    } catch {
+      /* localStorage unavailable — the change applies for this session only */
+    }
+  }
+
+  return { theme, unit, setTheme, setUnit }
 })

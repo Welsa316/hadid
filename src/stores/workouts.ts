@@ -16,6 +16,7 @@ import {
   updateSet,
   updateWorkout,
 } from '@/db/queries'
+import { useSettingsStore } from '@/stores/settings'
 import { todayLocalDate } from '@/utils/dates'
 import { workoutVolume } from '@/utils/volume-calc'
 
@@ -32,6 +33,8 @@ export const useWorkoutsStore = defineStore('workouts', () => {
   const activeSets = ref<WorkoutSet[]>([])
   const hydrated = ref(false)
   const error = ref<string | null>(null)
+
+  const settingsStore = useSettingsStore()
 
   async function hydrate(): Promise<void> {
     if (hydrated.value) return
@@ -65,6 +68,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
       notes: '',
       local_date: todayLocalDate(),
       exercise_ids: routine !== null ? [...routine.exercise_ids] : [],
+      weight_unit: settingsStore.unit,
       total_volume: 0,
       set_count: 0,
       exercise_count: 0,
@@ -174,6 +178,11 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     if (workout === null) return
     const existing = activeSets.value.filter((set) => set.exercise_id === exerciseId)
     const template = existing.at(-1) ?? (await getLastSetForExercise(exerciseId))
+    // Carry the previous weight only when its unit matches this workout's.
+    const weight =
+      template !== undefined && template.weight_unit === workout.weight_unit
+        ? template.weight
+        : 0
     const now = Date.now()
     const set: WorkoutSet = {
       id: uuidv7(),
@@ -181,8 +190,8 @@ export const useWorkoutsStore = defineStore('workouts', () => {
       exercise_id: exerciseId,
       set_number: existing.length + 1,
       reps: template?.reps ?? 0,
-      weight: template?.weight ?? 0,
-      weight_unit: template?.weight_unit ?? 'lb',
+      weight,
+      weight_unit: workout.weight_unit,
       is_warmup: false,
       is_pr: false,
       completed_at: now,

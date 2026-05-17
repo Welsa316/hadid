@@ -13,7 +13,7 @@ const emit = defineEmits<{ open: [] }>()
       {{ formatDurationShort(workout.duration_seconds) }} ·
       {{ workout.exercise_count }}
       {{ workout.exercise_count === 1 ? 'exercise' : 'exercises' }} ·
-      {{ workout.total_volume.toLocaleString() }} lb
+      {{ workout.total_volume.toLocaleString() }} {{ workout.weight_unit }}
     </span>
   </button>
 </template>
