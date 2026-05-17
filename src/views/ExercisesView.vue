@@ -3,10 +3,10 @@
 <template>
   <main class="page">
     <header class="page__header">
-      <h1 class="page__title">Home</h1>
+      <h1 class="page__title">Exercises</h1>
     </header>
     <div class="page__body">
-      <p class="page__placeholder">Start a workout, or pick up where you left off.</p>
+      <p class="page__placeholder">Browse the exercise library.</p>
     </div>
   </main>
 </template>

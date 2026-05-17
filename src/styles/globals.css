@@ -87,3 +87,48 @@ svg {
     scroll-behavior: auto !important;
   }
 }
+
+/* --- App page skeleton ------------------------------------------------ *
+ * Every routed view is a `.page`: a full-height column whose padding
+ * clears the notch (top) and the fixed bottom nav (bottom).               */
+
+.page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: var(--app-max-width);
+  min-height: 100dvh;
+  margin-inline: auto;
+  padding: calc(var(--safe-top) + var(--space-4)) calc(var(--safe-right) + var(--space-4))
+    calc(var(--bottom-nav-height) + var(--safe-bottom) + var(--space-5))
+    calc(var(--safe-left) + var(--space-4));
+}
+
+.page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  min-height: var(--touch-target-min);
+  margin-bottom: var(--space-4);
+}
+
+.page__title {
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.page__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+}
+
+.page__placeholder {
+  margin: auto;
+  max-width: 30ch;
+  color: var(--color-text-faint);
+  font-size: var(--text-sm);
+  text-align: center;
+}
