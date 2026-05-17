@@ -2,20 +2,32 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { v7 as uuidv7 } from 'uuid'
 
-import type { Routine, Workout } from '@/db/schema'
-import { createWorkout, getMeta, getWorkout, setMeta, updateWorkout } from '@/db/queries'
+import type { Routine, Workout, WorkoutSet } from '@/db/schema'
+import {
+  createSet,
+  createWorkout,
+  getLastSetForExercise,
+  getMeta,
+  getSetsByWorkout,
+  getWorkout,
+  removeSet,
+  setMeta,
+  updateSet,
+  updateWorkout,
+} from '@/db/queries'
 import { todayLocalDate } from '@/utils/dates'
 
 const ACTIVE_WORKOUT_KEY = 'active_workout_id'
 
 /**
- * Owns the single in-progress workout. The active workout is a persisted
- * `workouts` row from the instant it starts (not in-memory only), so it
- * survives the tab being evicted; `meta.active_workout_id` points at it and
- * `hydrate()` restores it on the next launch.
+ * Owns the single in-progress workout and its logged sets. The active workout
+ * and every set are persisted to IndexedDB as they happen (not in-memory
+ * only), so the session survives the tab being evicted; `hydrate()` restores
+ * both on the next launch.
  */
 export const useWorkoutsStore = defineStore('workouts', () => {
   const active = ref<Workout | null>(null)
+  const activeSets = ref<WorkoutSet[]>([])
   const hydrated = ref(false)
   const error = ref<string | null>(null)
 
@@ -25,8 +37,12 @@ export const useWorkoutsStore = defineStore('workouts', () => {
       const activeId = await getMeta<string | null>(ACTIVE_WORKOUT_KEY)
       if (typeof activeId === 'string') {
         const workout = await getWorkout(activeId)
-        active.value = workout !== undefined && workout.status === 'active' ? workout : null
-        if (active.value === null) await setMeta(ACTIVE_WORKOUT_KEY, null)
+        if (workout !== undefined && workout.status === 'active') {
+          active.value = workout
+          activeSets.value = await getSetsByWorkout(workout.id)
+        } else {
+          await setMeta(ACTIVE_WORKOUT_KEY, null)
+        }
       }
       hydrated.value = true
     } catch (cause: unknown) {
@@ -54,6 +70,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
       _v: 1,
     }
     active.value = workout
+    activeSets.value = []
     try {
       await createWorkout(workout)
       await setMeta(ACTIVE_WORKOUT_KEY, workout.id)
@@ -78,6 +95,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
       updated_at: now,
     }
     active.value = null
+    activeSets.value = []
     try {
       await updateWorkout(completed)
       await setMeta(ACTIVE_WORKOUT_KEY, null)
@@ -95,6 +113,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     const now = Date.now()
     const discarded: Workout = { ...workout, status: 'discarded', ended_at: now, updated_at: now }
     active.value = null
+    activeSets.value = []
     try {
       await updateWorkout(discarded)
       await setMeta(ACTIVE_WORKOUT_KEY, null)
@@ -105,5 +124,105 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     }
   }
 
-  return { active, hydrated, error, hydrate, start, finish, discard }
+  /** Appends exercises to the active workout's lineup. */
+  async function addExercises(exerciseIds: string[]): Promise<void> {
+    const workout = active.value
+    if (workout === null || exerciseIds.length === 0) return
+    const updated: Workout = {
+      ...workout,
+      exercise_ids: [...workout.exercise_ids, ...exerciseIds],
+      updated_at: Date.now(),
+    }
+    active.value = updated
+    try {
+      await updateWorkout(updated)
+    } catch (cause: unknown) {
+      active.value = workout
+      console.error('[hadid] failed to add exercises', cause)
+      throw cause
+    }
+  }
+
+  /**
+   * Logs a new set for an exercise, auto-filled from the last set of that
+   * exercise — first from this workout, then from the most recent past one.
+   */
+  async function addSet(exerciseId: string): Promise<void> {
+    const workout = active.value
+    if (workout === null) return
+    const existing = activeSets.value.filter((set) => set.exercise_id === exerciseId)
+    const template = existing.at(-1) ?? (await getLastSetForExercise(exerciseId))
+    const now = Date.now()
+    const set: WorkoutSet = {
+      id: uuidv7(),
+      workout_id: workout.id,
+      exercise_id: exerciseId,
+      set_number: existing.length + 1,
+      reps: template?.reps ?? 0,
+      weight: template?.weight ?? 0,
+      weight_unit: template?.weight_unit ?? 'lb',
+      is_warmup: false,
+      is_pr: false,
+      completed_at: now,
+      created_at: now,
+      updated_at: now,
+      deleted_at: null,
+      last_synced_at: null,
+      _v: 1,
+    }
+    activeSets.value.push(set)
+    try {
+      await createSet(set)
+    } catch (cause: unknown) {
+      activeSets.value = activeSets.value.filter((entry) => entry.id !== set.id)
+      console.error('[hadid] failed to add set', cause)
+      throw cause
+    }
+  }
+
+  async function editSet(updatedSet: WorkoutSet): Promise<void> {
+    const index = activeSets.value.findIndex((set) => set.id === updatedSet.id)
+    const previous = index >= 0 ? activeSets.value[index] : undefined
+    if (previous === undefined) return
+    const next: WorkoutSet = { ...updatedSet, updated_at: Date.now() }
+    activeSets.value[index] = next
+    try {
+      await updateSet(next)
+    } catch (cause: unknown) {
+      activeSets.value[index] = previous
+      console.error('[hadid] failed to update set', cause)
+      throw cause
+    }
+  }
+
+  async function deleteSet(setId: string): Promise<void> {
+    const index = activeSets.value.findIndex((set) => set.id === setId)
+    const set = index >= 0 ? activeSets.value[index] : undefined
+    if (set === undefined) return
+    const now = Date.now()
+    const deleted: WorkoutSet = { ...set, deleted_at: now, updated_at: now }
+    activeSets.value.splice(index, 1)
+    try {
+      await removeSet(deleted)
+    } catch (cause: unknown) {
+      activeSets.value.splice(index, 0, set)
+      console.error('[hadid] failed to delete set', cause)
+      throw cause
+    }
+  }
+
+  return {
+    active,
+    activeSets,
+    hydrated,
+    error,
+    hydrate,
+    start,
+    finish,
+    discard,
+    addExercises,
+    addSet,
+    editSet,
+    deleteSet,
+  }
 })

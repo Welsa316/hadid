@@ -11,6 +11,7 @@ import type {
   OutboxOp,
   Routine,
   Workout,
+  WorkoutSet,
 } from './schema'
 
 /** Bundled-library version. Bump to re-seed/upsert the exercise library. */
@@ -159,4 +160,42 @@ export async function createWorkout(workout: Workout): Promise<void> {
 
 export async function updateWorkout(workout: Workout): Promise<void> {
   await persistMutation('workouts', workout, 'update')
+}
+
+/* --- sets -------------------------------------------------------------- */
+
+/** All non-deleted sets belonging to a workout. */
+export async function getSetsByWorkout(workoutId: string): Promise<WorkoutSet[]> {
+  const db = await getDB()
+  const sets = await db.getAllFromIndex('sets', 'by_workout_id', workoutId)
+  return sets.filter((set) => set.deleted_at === null)
+}
+
+/**
+ * The most recent completed set logged for an exercise, used to auto-fill a
+ * new set. Walks the [exercise_id, completed_at] index newest-first.
+ */
+export async function getLastSetForExercise(exerciseId: string): Promise<WorkoutSet | undefined> {
+  const db = await getDB()
+  const index = db.transaction('sets').store.index('by_exercise_completed')
+  const range = IDBKeyRange.bound([exerciseId], [exerciseId, []])
+  let cursor = await index.openCursor(range, 'prev')
+  while (cursor !== null) {
+    if (cursor.value.deleted_at === null) return cursor.value
+    cursor = await cursor.continue()
+  }
+  return undefined
+}
+
+export async function createSet(set: WorkoutSet): Promise<void> {
+  await persistMutation('sets', set, 'create')
+}
+
+export async function updateSet(set: WorkoutSet): Promise<void> {
+  await persistMutation('sets', set, 'update')
+}
+
+/** Persists a soft-deleted set (caller sets `deleted_at`). */
+export async function removeSet(set: WorkoutSet): Promise<void> {
+  await persistMutation('sets', set, 'delete')
 }

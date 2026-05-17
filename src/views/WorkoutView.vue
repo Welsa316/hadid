@@ -2,16 +2,17 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-import { useExercisesStore } from '@/stores/exercises'
+import ExercisePicker from '@/components/ExercisePicker.vue'
+import SetLogger from '@/components/SetLogger.vue'
 import { useWorkoutsStore } from '@/stores/workouts'
 import { formatDuration } from '@/utils/dates'
 
 const router = useRouter()
 const workoutsStore = useWorkoutsStore()
-const exercisesStore = useExercisesStore()
 
 const elapsedSeconds = ref(0)
 const actionError = ref<string | null>(null)
+const pickerOpen = ref(false)
 let timerId: number | undefined
 
 function tick(): void {
@@ -29,14 +30,12 @@ onUnmounted(() => {
   if (timerId !== undefined) window.clearInterval(timerId)
 })
 
-const exercises = computed(() => {
-  const workout = workoutsStore.active
-  if (workout === null) return []
-  return workout.exercise_ids.map((id) => ({
-    id,
-    name: exercisesStore.byId.get(id)?.name ?? 'Unknown exercise',
-  }))
-})
+const exerciseIds = computed(() => workoutsStore.active?.exercise_ids ?? [])
+
+function onPickerConfirm(ids: string[]): void {
+  void workoutsStore.addExercises(ids)
+  pickerOpen.value = false
+}
 
 async function finishWorkout(): Promise<void> {
   actionError.value = null
@@ -71,16 +70,19 @@ async function discardWorkout(): Promise<void> {
       <div class="page__body">
         <p v-if="actionError" class="workout-error" role="alert">{{ actionError }}</p>
 
-        <ul v-if="exercises.length > 0" class="workout-exercises">
-          <li
-            v-for="(exercise, index) in exercises"
-            :key="`${exercise.id}-${index}`"
-            class="workout-exercise"
-          >
-            {{ exercise.name }}
-          </li>
-        </ul>
-        <p v-else class="page__placeholder">This workout has no exercises yet.</p>
+        <SetLogger
+          v-for="(id, index) in exerciseIds"
+          :key="`${id}-${index}`"
+          :exercise-id="id"
+        />
+
+        <p v-if="exerciseIds.length === 0" class="workout-hint">
+          No exercises yet. Add some to start logging sets.
+        </p>
+
+        <button type="button" class="workout-add" @click="pickerOpen = true">
+          + Add exercise
+        </button>
 
         <button type="button" class="workout-discard" @click="discardWorkout">
           Discard workout
@@ -97,6 +99,13 @@ async function discardWorkout(): Promise<void> {
       </div>
     </template>
   </main>
+
+  <ExercisePicker
+    v-if="pickerOpen"
+    :exclude-ids="exerciseIds"
+    @close="pickerOpen = false"
+    @confirm="onPickerConfirm"
+  />
 </template>
 
 <style scoped>
@@ -127,25 +136,31 @@ async function discardWorkout(): Promise<void> {
   font-size: var(--text-sm);
 }
 
-.workout-exercises {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  list-style: none;
+.workout-hint {
+  margin: var(--space-6) 0;
+  color: var(--color-text-faint);
+  font-size: var(--text-sm);
+  text-align: center;
 }
 
-.workout-exercise {
-  padding: var(--space-4);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
+.workout-add {
+  width: 100%;
+  min-height: var(--touch-target-min);
+  background-color: transparent;
+  border: 1px dashed var(--color-border);
   border-radius: var(--radius-md);
-  font-weight: 600;
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.workout-add:active {
+  background-color: var(--color-surface);
 }
 
 .workout-discard {
   width: 100%;
   min-height: var(--touch-target-min);
-  margin-top: auto;
+  margin-top: var(--space-5);
   background-color: transparent;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
