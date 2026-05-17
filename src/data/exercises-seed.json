@@ -1,0 +1,2112 @@
+[
+  {
+    "id": "barbell-flat-bench-press",
+    "name": "Barbell Flat Bench Press",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "triceps",
+      "shoulders"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-incline-bench-press",
+    "name": "Barbell Incline Bench Press",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "shoulders",
+      "triceps"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-decline-bench-press",
+    "name": "Barbell Decline Bench Press",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "triceps",
+      "shoulders"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-flat-bench-press",
+    "name": "Dumbbell Flat Bench Press",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "triceps",
+      "shoulders"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-incline-bench-press",
+    "name": "Dumbbell Incline Bench Press",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "shoulders",
+      "triceps"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-decline-bench-press",
+    "name": "Dumbbell Decline Bench Press",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "triceps",
+      "shoulders"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "machine-chest-press",
+    "name": "Machine Chest Press",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "triceps",
+      "shoulders"
+    ],
+    "equipment": "machine",
+    "type": "compound"
+  },
+  {
+    "id": "machine-incline-chest-press",
+    "name": "Machine Incline Chest Press",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "shoulders",
+      "triceps"
+    ],
+    "equipment": "machine",
+    "type": "compound"
+  },
+  {
+    "id": "smith-machine-bench-press",
+    "name": "Smith Machine Bench Press",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "triceps",
+      "shoulders"
+    ],
+    "equipment": "smith_machine",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-chest-fly",
+    "name": "Dumbbell Chest Fly",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "shoulders"
+    ],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-incline-chest-fly",
+    "name": "Dumbbell Incline Chest Fly",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "shoulders"
+    ],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "cable-chest-fly",
+    "name": "Cable Chest Fly",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "shoulders"
+    ],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "machine-pec-deck-fly",
+    "name": "Machine Pec Deck Fly",
+    "primary_muscle": "chest",
+    "secondary_muscles": [],
+    "equipment": "machine",
+    "type": "isolation"
+  },
+  {
+    "id": "cable-crossover",
+    "name": "Cable Crossover",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "shoulders"
+    ],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "push-up",
+    "name": "Push-Up",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "triceps",
+      "shoulders",
+      "core"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "barbell-conventional-deadlift",
+    "name": "Barbell Conventional Deadlift",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "hamstrings",
+      "glutes",
+      "traps"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-sumo-deadlift",
+    "name": "Barbell Sumo Deadlift",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "glutes",
+      "quads",
+      "hamstrings"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-romanian-deadlift",
+    "name": "Barbell Romanian Deadlift",
+    "primary_muscle": "hamstrings",
+    "secondary_muscles": [
+      "glutes",
+      "back"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-stiff-leg-deadlift",
+    "name": "Barbell Stiff-Leg Deadlift",
+    "primary_muscle": "hamstrings",
+    "secondary_muscles": [
+      "glutes",
+      "back"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-romanian-deadlift",
+    "name": "Dumbbell Romanian Deadlift",
+    "primary_muscle": "hamstrings",
+    "secondary_muscles": [
+      "glutes",
+      "back"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "trap-bar-deadlift",
+    "name": "Trap Bar Deadlift",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "quads",
+      "glutes",
+      "traps"
+    ],
+    "equipment": "other",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-bent-over-row",
+    "name": "Barbell Bent-Over Row",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "lats",
+      "biceps"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-pendlay-row",
+    "name": "Barbell Pendlay Row",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "lats",
+      "traps",
+      "biceps"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-bent-over-row",
+    "name": "Dumbbell Bent-Over Row",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "lats",
+      "biceps"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-single-arm-row",
+    "name": "Dumbbell Single-Arm Row",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "lats",
+      "biceps"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "cable-seated-row",
+    "name": "Cable Seated Row",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "lats",
+      "biceps"
+    ],
+    "equipment": "cable",
+    "type": "compound"
+  },
+  {
+    "id": "machine-seated-row",
+    "name": "Machine Seated Row",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "lats",
+      "biceps"
+    ],
+    "equipment": "machine",
+    "type": "compound"
+  },
+  {
+    "id": "machine-chest-supported-row",
+    "name": "Machine Chest-Supported Row",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "lats",
+      "traps",
+      "biceps"
+    ],
+    "equipment": "machine",
+    "type": "compound"
+  },
+  {
+    "id": "t-bar-row",
+    "name": "T-Bar Row",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "lats",
+      "traps",
+      "biceps"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "cable-wide-grip-lat-pulldown",
+    "name": "Cable Wide-Grip Lat Pulldown",
+    "primary_muscle": "lats",
+    "secondary_muscles": [
+      "back",
+      "biceps"
+    ],
+    "equipment": "cable",
+    "type": "compound"
+  },
+  {
+    "id": "cable-close-grip-lat-pulldown",
+    "name": "Cable Close-Grip Lat Pulldown",
+    "primary_muscle": "lats",
+    "secondary_muscles": [
+      "back",
+      "biceps"
+    ],
+    "equipment": "cable",
+    "type": "compound"
+  },
+  {
+    "id": "machine-lat-pulldown",
+    "name": "Machine Lat Pulldown",
+    "primary_muscle": "lats",
+    "secondary_muscles": [
+      "back",
+      "biceps"
+    ],
+    "equipment": "machine",
+    "type": "compound"
+  },
+  {
+    "id": "cable-straight-arm-pulldown",
+    "name": "Cable Straight-Arm Pulldown",
+    "primary_muscle": "lats",
+    "secondary_muscles": [
+      "triceps"
+    ],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "pull-up",
+    "name": "Pull-Up",
+    "primary_muscle": "lats",
+    "secondary_muscles": [
+      "back",
+      "biceps"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "chin-up",
+    "name": "Chin-Up",
+    "primary_muscle": "lats",
+    "secondary_muscles": [
+      "biceps",
+      "back"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "wide-grip-pull-up",
+    "name": "Wide-Grip Pull-Up",
+    "primary_muscle": "lats",
+    "secondary_muscles": [
+      "back",
+      "biceps"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "assisted-machine-pull-up",
+    "name": "Assisted Machine Pull-Up",
+    "primary_muscle": "lats",
+    "secondary_muscles": [
+      "back",
+      "biceps"
+    ],
+    "equipment": "machine",
+    "type": "compound"
+  },
+  {
+    "id": "inverted-row",
+    "name": "Inverted Row",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "lats",
+      "biceps"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "barbell-shrug",
+    "name": "Barbell Shrug",
+    "primary_muscle": "traps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "barbell",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-shrug",
+    "name": "Dumbbell Shrug",
+    "primary_muscle": "traps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "cable-shrug",
+    "name": "Cable Shrug",
+    "primary_muscle": "traps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "barbell-upright-row",
+    "name": "Barbell Upright Row",
+    "primary_muscle": "traps",
+    "secondary_muscles": [
+      "shoulders",
+      "biceps"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "cable-face-pull",
+    "name": "Cable Face Pull",
+    "primary_muscle": "traps",
+    "secondary_muscles": [
+      "shoulders"
+    ],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "back-extension",
+    "name": "Back Extension",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "machine-back-extension",
+    "name": "Machine Back Extension",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": "machine",
+    "type": "isolation"
+  },
+  {
+    "id": "barbell-good-morning",
+    "name": "Barbell Good Morning",
+    "primary_muscle": "hamstrings",
+    "secondary_muscles": [
+      "back",
+      "glutes"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-overhead-press",
+    "name": "Barbell Overhead Press",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "triceps",
+      "traps"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-push-press",
+    "name": "Barbell Push Press",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "triceps",
+      "quads"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-seated-overhead-press",
+    "name": "Barbell Seated Overhead Press",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "triceps",
+      "traps"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-overhead-press",
+    "name": "Dumbbell Overhead Press",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "triceps",
+      "traps"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-seated-shoulder-press",
+    "name": "Dumbbell Seated Shoulder Press",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "triceps",
+      "traps"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-arnold-press",
+    "name": "Dumbbell Arnold Press",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "triceps",
+      "traps"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "machine-shoulder-press",
+    "name": "Machine Shoulder Press",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "triceps"
+    ],
+    "equipment": "machine",
+    "type": "compound"
+  },
+  {
+    "id": "smith-machine-shoulder-press",
+    "name": "Smith Machine Shoulder Press",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "triceps",
+      "traps"
+    ],
+    "equipment": "smith_machine",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-lateral-raise",
+    "name": "Dumbbell Lateral Raise",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "cable-lateral-raise",
+    "name": "Cable Lateral Raise",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "machine-lateral-raise",
+    "name": "Machine Lateral Raise",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [],
+    "equipment": "machine",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-front-raise",
+    "name": "Dumbbell Front Raise",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "cable-front-raise",
+    "name": "Cable Front Raise",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-rear-delt-fly",
+    "name": "Dumbbell Rear Delt Fly",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "traps"
+    ],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "cable-rear-delt-fly",
+    "name": "Cable Rear Delt Fly",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "traps"
+    ],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "machine-reverse-pec-deck",
+    "name": "Machine Reverse Pec Deck",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "traps"
+    ],
+    "equipment": "machine",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-upright-row",
+    "name": "Dumbbell Upright Row",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "traps",
+      "biceps"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-landmine-press",
+    "name": "Barbell Landmine Press",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "triceps",
+      "chest"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "pike-push-up",
+    "name": "Pike Push-Up",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "triceps",
+      "chest"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "barbell-back-squat",
+    "name": "Barbell Back Squat",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings",
+      "core"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-front-squat",
+    "name": "Barbell Front Squat",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "core"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "smith-machine-squat",
+    "name": "Smith Machine Squat",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": "smith_machine",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-goblet-squat",
+    "name": "Dumbbell Goblet Squat",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "core"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "kettlebell-goblet-squat",
+    "name": "Kettlebell Goblet Squat",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "core"
+    ],
+    "equipment": "kettlebell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-bulgarian-split-squat",
+    "name": "Barbell Bulgarian Split Squat",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-bulgarian-split-squat",
+    "name": "Dumbbell Bulgarian Split Squat",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-walking-lunge",
+    "name": "Dumbbell Walking Lunge",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-reverse-lunge",
+    "name": "Barbell Reverse Lunge",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-step-up",
+    "name": "Dumbbell Step-Up",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "machine-leg-press",
+    "name": "Machine Leg Press",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": "machine",
+    "type": "compound"
+  },
+  {
+    "id": "machine-hack-squat",
+    "name": "Machine Hack Squat",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": "machine",
+    "type": "compound"
+  },
+  {
+    "id": "machine-leg-extension",
+    "name": "Machine Leg Extension",
+    "primary_muscle": "quads",
+    "secondary_muscles": [],
+    "equipment": "machine",
+    "type": "isolation"
+  },
+  {
+    "id": "bodyweight-air-squat",
+    "name": "Bodyweight Air Squat",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "core"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "bodyweight-walking-lunge",
+    "name": "Bodyweight Walking Lunge",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "pistol-squat",
+    "name": "Pistol Squat",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "core"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "machine-lying-leg-curl",
+    "name": "Machine Lying Leg Curl",
+    "primary_muscle": "hamstrings",
+    "secondary_muscles": [
+      "calves"
+    ],
+    "equipment": "machine",
+    "type": "isolation"
+  },
+  {
+    "id": "machine-seated-leg-curl",
+    "name": "Machine Seated Leg Curl",
+    "primary_muscle": "hamstrings",
+    "secondary_muscles": [
+      "calves"
+    ],
+    "equipment": "machine",
+    "type": "isolation"
+  },
+  {
+    "id": "nordic-hamstring-curl",
+    "name": "Nordic Hamstring Curl",
+    "primary_muscle": "hamstrings",
+    "secondary_muscles": [
+      "glutes",
+      "calves"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "cable-pull-through",
+    "name": "Cable Pull-Through",
+    "primary_muscle": "glutes",
+    "secondary_muscles": [
+      "hamstrings",
+      "back"
+    ],
+    "equipment": "cable",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-hip-thrust",
+    "name": "Barbell Hip Thrust",
+    "primary_muscle": "glutes",
+    "secondary_muscles": [
+      "hamstrings",
+      "quads"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "machine-hip-thrust",
+    "name": "Machine Hip Thrust",
+    "primary_muscle": "glutes",
+    "secondary_muscles": [
+      "hamstrings"
+    ],
+    "equipment": "machine",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-glute-bridge",
+    "name": "Barbell Glute Bridge",
+    "primary_muscle": "glutes",
+    "secondary_muscles": [
+      "hamstrings"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "cable-glute-kickback",
+    "name": "Cable Glute Kickback",
+    "primary_muscle": "glutes",
+    "secondary_muscles": [
+      "hamstrings"
+    ],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "machine-hip-abduction",
+    "name": "Machine Hip Abduction",
+    "primary_muscle": "glutes",
+    "secondary_muscles": [],
+    "equipment": "machine",
+    "type": "isolation"
+  },
+  {
+    "id": "machine-hip-adduction",
+    "name": "Machine Hip Adduction",
+    "primary_muscle": "quads",
+    "secondary_muscles": [],
+    "equipment": "machine",
+    "type": "isolation"
+  },
+  {
+    "id": "band-glute-bridge",
+    "name": "Band Glute Bridge",
+    "primary_muscle": "glutes",
+    "secondary_muscles": [
+      "hamstrings"
+    ],
+    "equipment": "band",
+    "type": "isolation"
+  },
+  {
+    "id": "barbell-standing-calf-raise",
+    "name": "Barbell Standing Calf Raise",
+    "primary_muscle": "calves",
+    "secondary_muscles": [],
+    "equipment": "barbell",
+    "type": "isolation"
+  },
+  {
+    "id": "machine-standing-calf-raise",
+    "name": "Machine Standing Calf Raise",
+    "primary_muscle": "calves",
+    "secondary_muscles": [],
+    "equipment": "machine",
+    "type": "isolation"
+  },
+  {
+    "id": "machine-seated-calf-raise",
+    "name": "Machine Seated Calf Raise",
+    "primary_muscle": "calves",
+    "secondary_muscles": [],
+    "equipment": "machine",
+    "type": "isolation"
+  },
+  {
+    "id": "machine-leg-press-calf-raise",
+    "name": "Machine Leg Press Calf Raise",
+    "primary_muscle": "calves",
+    "secondary_muscles": [],
+    "equipment": "machine",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-single-leg-calf-raise",
+    "name": "Dumbbell Single-Leg Calf Raise",
+    "primary_muscle": "calves",
+    "secondary_muscles": [],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "smith-machine-calf-raise",
+    "name": "Smith Machine Calf Raise",
+    "primary_muscle": "calves",
+    "secondary_muscles": [],
+    "equipment": "smith_machine",
+    "type": "isolation"
+  },
+  {
+    "id": "barbell-curl",
+    "name": "Barbell Curl",
+    "primary_muscle": "biceps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "barbell",
+    "type": "isolation"
+  },
+  {
+    "id": "ez-bar-curl",
+    "name": "EZ Bar Curl",
+    "primary_muscle": "biceps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "ez_bar",
+    "type": "isolation"
+  },
+  {
+    "id": "ez-bar-preacher-curl",
+    "name": "EZ Bar Preacher Curl",
+    "primary_muscle": "biceps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "ez_bar",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-curl",
+    "name": "Dumbbell Curl",
+    "primary_muscle": "biceps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-incline-curl",
+    "name": "Dumbbell Incline Curl",
+    "primary_muscle": "biceps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-hammer-curl",
+    "name": "Dumbbell Hammer Curl",
+    "primary_muscle": "biceps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-concentration-curl",
+    "name": "Dumbbell Concentration Curl",
+    "primary_muscle": "biceps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "cable-curl",
+    "name": "Cable Curl",
+    "primary_muscle": "biceps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "cable-rope-hammer-curl",
+    "name": "Cable Rope Hammer Curl",
+    "primary_muscle": "biceps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "machine-preacher-curl",
+    "name": "Machine Preacher Curl",
+    "primary_muscle": "biceps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "machine",
+    "type": "isolation"
+  },
+  {
+    "id": "barbell-spider-curl",
+    "name": "Barbell Spider Curl",
+    "primary_muscle": "biceps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "barbell",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-close-grip-bench-press",
+    "name": "Dumbbell Close-Grip Bench Press",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [
+      "chest",
+      "shoulders"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-close-grip-bench-press",
+    "name": "Barbell Close-Grip Bench Press",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [
+      "chest",
+      "shoulders"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "ez-bar-skull-crusher",
+    "name": "EZ Bar Skull Crusher",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [],
+    "equipment": "ez_bar",
+    "type": "isolation"
+  },
+  {
+    "id": "barbell-skull-crusher",
+    "name": "Barbell Skull Crusher",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [],
+    "equipment": "barbell",
+    "type": "isolation"
+  },
+  {
+    "id": "cable-tricep-pushdown",
+    "name": "Cable Tricep Pushdown",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "cable-rope-tricep-pushdown",
+    "name": "Cable Rope Tricep Pushdown",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "cable-overhead-tricep-extension",
+    "name": "Cable Overhead Tricep Extension",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-overhead-tricep-extension",
+    "name": "Dumbbell Overhead Tricep Extension",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-tricep-kickback",
+    "name": "Dumbbell Tricep Kickback",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "machine-tricep-dip",
+    "name": "Machine Tricep Dip",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [
+      "chest",
+      "shoulders"
+    ],
+    "equipment": "machine",
+    "type": "compound"
+  },
+  {
+    "id": "tricep-dip",
+    "name": "Tricep Dip",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [
+      "chest",
+      "shoulders"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "bench-dip",
+    "name": "Bench Dip",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [
+      "chest",
+      "shoulders"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "diamond-push-up",
+    "name": "Diamond Push-Up",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [
+      "chest",
+      "shoulders"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "barbell-wrist-curl",
+    "name": "Barbell Wrist Curl",
+    "primary_muscle": "forearms",
+    "secondary_muscles": [],
+    "equipment": "barbell",
+    "type": "isolation"
+  },
+  {
+    "id": "barbell-reverse-wrist-curl",
+    "name": "Barbell Reverse Wrist Curl",
+    "primary_muscle": "forearms",
+    "secondary_muscles": [],
+    "equipment": "barbell",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-wrist-curl",
+    "name": "Dumbbell Wrist Curl",
+    "primary_muscle": "forearms",
+    "secondary_muscles": [],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "ez-bar-reverse-curl",
+    "name": "EZ Bar Reverse Curl",
+    "primary_muscle": "forearms",
+    "secondary_muscles": [
+      "biceps"
+    ],
+    "equipment": "ez_bar",
+    "type": "isolation"
+  },
+  {
+    "id": "barbell-wrist-roller",
+    "name": "Barbell Wrist Roller",
+    "primary_muscle": "forearms",
+    "secondary_muscles": [],
+    "equipment": "other",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-farmers-walk",
+    "name": "Dumbbell Farmer's Walk",
+    "primary_muscle": "forearms",
+    "secondary_muscles": [
+      "traps",
+      "core"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "plank",
+    "name": "Plank",
+    "primary_muscle": "core",
+    "secondary_muscles": [
+      "shoulders",
+      "glutes"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "side-plank",
+    "name": "Side Plank",
+    "primary_muscle": "core",
+    "secondary_muscles": [
+      "shoulders",
+      "glutes"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "crunch",
+    "name": "Crunch",
+    "primary_muscle": "core",
+    "secondary_muscles": [],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "bicycle-crunch",
+    "name": "Bicycle Crunch",
+    "primary_muscle": "core",
+    "secondary_muscles": [],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "hanging-leg-raise",
+    "name": "Hanging Leg Raise",
+    "primary_muscle": "core",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "lying-leg-raise",
+    "name": "Lying Leg Raise",
+    "primary_muscle": "core",
+    "secondary_muscles": [],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "cable-crunch",
+    "name": "Cable Crunch",
+    "primary_muscle": "core",
+    "secondary_muscles": [],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "cable-woodchopper",
+    "name": "Cable Woodchopper",
+    "primary_muscle": "core",
+    "secondary_muscles": [
+      "shoulders"
+    ],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "machine-ab-crunch",
+    "name": "Machine Ab Crunch",
+    "primary_muscle": "core",
+    "secondary_muscles": [],
+    "equipment": "machine",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-russian-twist",
+    "name": "Dumbbell Russian Twist",
+    "primary_muscle": "core",
+    "secondary_muscles": [],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "kettlebell-russian-twist",
+    "name": "Kettlebell Russian Twist",
+    "primary_muscle": "core",
+    "secondary_muscles": [],
+    "equipment": "kettlebell",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-side-bend",
+    "name": "Dumbbell Side Bend",
+    "primary_muscle": "core",
+    "secondary_muscles": [],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "ab-wheel-rollout",
+    "name": "Ab Wheel Rollout",
+    "primary_muscle": "core",
+    "secondary_muscles": [
+      "lats",
+      "shoulders"
+    ],
+    "equipment": "other",
+    "type": "compound"
+  },
+  {
+    "id": "mountain-climber",
+    "name": "Mountain Climber",
+    "primary_muscle": "core",
+    "secondary_muscles": [
+      "shoulders",
+      "quads"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "dead-bug",
+    "name": "Dead Bug",
+    "primary_muscle": "core",
+    "secondary_muscles": [],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "cable-pallof-press",
+    "name": "Cable Pallof Press",
+    "primary_muscle": "core",
+    "secondary_muscles": [
+      "shoulders"
+    ],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "barbell-clean",
+    "name": "Barbell Clean",
+    "primary_muscle": "full_body",
+    "secondary_muscles": [
+      "quads",
+      "back",
+      "traps"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-power-clean",
+    "name": "Barbell Power Clean",
+    "primary_muscle": "full_body",
+    "secondary_muscles": [
+      "quads",
+      "back",
+      "traps"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-snatch",
+    "name": "Barbell Snatch",
+    "primary_muscle": "full_body",
+    "secondary_muscles": [
+      "quads",
+      "shoulders",
+      "back"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-clean-and-jerk",
+    "name": "Barbell Clean And Jerk",
+    "primary_muscle": "full_body",
+    "secondary_muscles": [
+      "quads",
+      "shoulders",
+      "back"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-hang-clean",
+    "name": "Barbell Hang Clean",
+    "primary_muscle": "full_body",
+    "secondary_muscles": [
+      "quads",
+      "back",
+      "traps"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-thruster",
+    "name": "Barbell Thruster",
+    "primary_muscle": "full_body",
+    "secondary_muscles": [
+      "quads",
+      "shoulders",
+      "glutes"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-thruster",
+    "name": "Dumbbell Thruster",
+    "primary_muscle": "full_body",
+    "secondary_muscles": [
+      "quads",
+      "shoulders",
+      "glutes"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "kettlebell-swing",
+    "name": "Kettlebell Swing",
+    "primary_muscle": "full_body",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings",
+      "back"
+    ],
+    "equipment": "kettlebell",
+    "type": "compound"
+  },
+  {
+    "id": "kettlebell-clean-and-press",
+    "name": "Kettlebell Clean And Press",
+    "primary_muscle": "full_body",
+    "secondary_muscles": [
+      "shoulders",
+      "quads",
+      "back"
+    ],
+    "equipment": "kettlebell",
+    "type": "compound"
+  },
+  {
+    "id": "kettlebell-turkish-get-up",
+    "name": "Kettlebell Turkish Get-Up",
+    "primary_muscle": "full_body",
+    "secondary_muscles": [
+      "core",
+      "shoulders",
+      "glutes"
+    ],
+    "equipment": "kettlebell",
+    "type": "compound"
+  },
+  {
+    "id": "burpee",
+    "name": "Burpee",
+    "primary_muscle": "full_body",
+    "secondary_muscles": [
+      "chest",
+      "quads",
+      "core"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "treadmill-running",
+    "name": "Treadmill Running",
+    "primary_muscle": "cardio",
+    "secondary_muscles": [
+      "quads",
+      "calves"
+    ],
+    "equipment": "cardio",
+    "type": "cardio"
+  },
+  {
+    "id": "outdoor-running",
+    "name": "Outdoor Running",
+    "primary_muscle": "cardio",
+    "secondary_muscles": [
+      "quads",
+      "calves"
+    ],
+    "equipment": "other",
+    "type": "cardio"
+  },
+  {
+    "id": "stationary-bike-cycling",
+    "name": "Stationary Bike Cycling",
+    "primary_muscle": "cardio",
+    "secondary_muscles": [
+      "quads",
+      "calves"
+    ],
+    "equipment": "cardio",
+    "type": "cardio"
+  },
+  {
+    "id": "rowing-machine",
+    "name": "Rowing Machine",
+    "primary_muscle": "cardio",
+    "secondary_muscles": [
+      "back",
+      "quads",
+      "core"
+    ],
+    "equipment": "cardio",
+    "type": "cardio"
+  },
+  {
+    "id": "stair-climber",
+    "name": "Stair Climber",
+    "primary_muscle": "cardio",
+    "secondary_muscles": [
+      "quads",
+      "glutes",
+      "calves"
+    ],
+    "equipment": "cardio",
+    "type": "cardio"
+  },
+  {
+    "id": "elliptical-trainer",
+    "name": "Elliptical Trainer",
+    "primary_muscle": "cardio",
+    "secondary_muscles": [
+      "quads",
+      "hamstrings"
+    ],
+    "equipment": "cardio",
+    "type": "cardio"
+  },
+  {
+    "id": "jump-rope",
+    "name": "Jump Rope",
+    "primary_muscle": "cardio",
+    "secondary_muscles": [
+      "calves",
+      "shoulders"
+    ],
+    "equipment": "other",
+    "type": "cardio"
+  },
+  {
+    "id": "machine-converging-chest-press",
+    "name": "Machine Converging Chest Press",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "triceps",
+      "shoulders"
+    ],
+    "equipment": "machine",
+    "type": "compound"
+  },
+  {
+    "id": "chest-dip",
+    "name": "Chest Dip",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "triceps",
+      "shoulders"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "barbell-deficit-deadlift",
+    "name": "Barbell Deficit Deadlift",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "hamstrings",
+      "glutes",
+      "quads"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-rack-pull",
+    "name": "Barbell Rack Pull",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "traps",
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "cable-single-arm-row",
+    "name": "Cable Single-Arm Row",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "lats",
+      "biceps"
+    ],
+    "equipment": "cable",
+    "type": "compound"
+  },
+  {
+    "id": "smith-machine-bent-over-row",
+    "name": "Smith Machine Bent-Over Row",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "lats",
+      "biceps"
+    ],
+    "equipment": "smith_machine",
+    "type": "compound"
+  },
+  {
+    "id": "machine-iso-lateral-pulldown",
+    "name": "Machine Iso-Lateral Pulldown",
+    "primary_muscle": "lats",
+    "secondary_muscles": [
+      "back",
+      "biceps"
+    ],
+    "equipment": "machine",
+    "type": "compound"
+  },
+  {
+    "id": "cable-neutral-grip-pulldown",
+    "name": "Cable Neutral-Grip Pulldown",
+    "primary_muscle": "lats",
+    "secondary_muscles": [
+      "back",
+      "biceps"
+    ],
+    "equipment": "cable",
+    "type": "compound"
+  },
+  {
+    "id": "kettlebell-single-arm-row",
+    "name": "Kettlebell Single-Arm Row",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "lats",
+      "biceps"
+    ],
+    "equipment": "kettlebell",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-shoulder-press-standing",
+    "name": "Dumbbell Standing Shoulder Press",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "triceps",
+      "core"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "kettlebell-overhead-press",
+    "name": "Kettlebell Overhead Press",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "triceps",
+      "core"
+    ],
+    "equipment": "kettlebell",
+    "type": "compound"
+  },
+  {
+    "id": "band-lateral-raise",
+    "name": "Band Lateral Raise",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [],
+    "equipment": "band",
+    "type": "isolation"
+  },
+  {
+    "id": "band-pull-apart",
+    "name": "Band Pull-Apart",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [
+      "traps"
+    ],
+    "equipment": "band",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-leaning-lateral-raise",
+    "name": "Dumbbell Leaning Lateral Raise",
+    "primary_muscle": "shoulders",
+    "secondary_muscles": [],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "barbell-low-bar-squat",
+    "name": "Barbell Low-Bar Squat",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings",
+      "back"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-box-squat",
+    "name": "Barbell Box Squat",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "single-leg-romanian-deadlift",
+    "name": "Single-Leg Romanian Deadlift",
+    "primary_muscle": "hamstrings",
+    "secondary_muscles": [
+      "glutes",
+      "back",
+      "core"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "kettlebell-single-leg-deadlift",
+    "name": "Kettlebell Single-Leg Deadlift",
+    "primary_muscle": "hamstrings",
+    "secondary_muscles": [
+      "glutes",
+      "back",
+      "core"
+    ],
+    "equipment": "kettlebell",
+    "type": "compound"
+  },
+  {
+    "id": "glute-ham-raise",
+    "name": "Glute Ham Raise",
+    "primary_muscle": "hamstrings",
+    "secondary_muscles": [
+      "glutes",
+      "calves"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "band-leg-curl",
+    "name": "Band Leg Curl",
+    "primary_muscle": "hamstrings",
+    "secondary_muscles": [],
+    "equipment": "band",
+    "type": "isolation"
+  },
+  {
+    "id": "single-leg-hip-thrust",
+    "name": "Single-Leg Hip Thrust",
+    "primary_muscle": "glutes",
+    "secondary_muscles": [
+      "hamstrings",
+      "core"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "dumbbell-frog-pump",
+    "name": "Dumbbell Frog Pump",
+    "primary_muscle": "glutes",
+    "secondary_muscles": [
+      "hamstrings"
+    ],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "cable-hip-abduction",
+    "name": "Cable Hip Abduction",
+    "primary_muscle": "glutes",
+    "secondary_muscles": [],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-seated-calf-raise",
+    "name": "Dumbbell Seated Calf Raise",
+    "primary_muscle": "calves",
+    "secondary_muscles": [],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "cable-bayesian-curl",
+    "name": "Cable Bayesian Curl",
+    "primary_muscle": "biceps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "band-bicep-curl",
+    "name": "Band Bicep Curl",
+    "primary_muscle": "biceps",
+    "secondary_muscles": [
+      "forearms"
+    ],
+    "equipment": "band",
+    "type": "isolation"
+  },
+  {
+    "id": "machine-tricep-extension",
+    "name": "Machine Tricep Extension",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [],
+    "equipment": "machine",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-tricep-extension-seated",
+    "name": "Dumbbell Seated Tricep Extension",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [],
+    "equipment": "dumbbell",
+    "type": "isolation"
+  },
+  {
+    "id": "band-tricep-pushdown",
+    "name": "Band Tricep Pushdown",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [],
+    "equipment": "band",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-jm-press",
+    "name": "Dumbbell JM Press",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [
+      "chest",
+      "shoulders"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "cable-reverse-grip-pushdown",
+    "name": "Cable Reverse-Grip Pushdown",
+    "primary_muscle": "triceps",
+    "secondary_muscles": [],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "v-up",
+    "name": "V-Up",
+    "primary_muscle": "core",
+    "secondary_muscles": [
+      "quads"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "hollow-body-hold",
+    "name": "Hollow Body Hold",
+    "primary_muscle": "core",
+    "secondary_muscles": [
+      "quads",
+      "shoulders"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "toes-to-bar",
+    "name": "Toes To Bar",
+    "primary_muscle": "core",
+    "secondary_muscles": [
+      "lats",
+      "forearms"
+    ],
+    "equipment": "bodyweight",
+    "type": "bodyweight"
+  },
+  {
+    "id": "weighted-plank",
+    "name": "Weighted Plank",
+    "primary_muscle": "core",
+    "secondary_muscles": [
+      "shoulders",
+      "glutes"
+    ],
+    "equipment": "other",
+    "type": "isolation"
+  },
+  {
+    "id": "kettlebell-windmill",
+    "name": "Kettlebell Windmill",
+    "primary_muscle": "core",
+    "secondary_muscles": [
+      "shoulders",
+      "glutes"
+    ],
+    "equipment": "kettlebell",
+    "type": "compound"
+  },
+  {
+    "id": "cable-oblique-twist",
+    "name": "Cable Oblique Twist",
+    "primary_muscle": "core",
+    "secondary_muscles": [
+      "shoulders"
+    ],
+    "equipment": "cable",
+    "type": "isolation"
+  },
+  {
+    "id": "dumbbell-pullover",
+    "name": "Dumbbell Pullover",
+    "primary_muscle": "lats",
+    "secondary_muscles": [
+      "chest",
+      "triceps"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "barbell-floor-press",
+    "name": "Barbell Floor Press",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "triceps",
+      "shoulders"
+    ],
+    "equipment": "barbell",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-floor-press",
+    "name": "Dumbbell Floor Press",
+    "primary_muscle": "chest",
+    "secondary_muscles": [
+      "triceps",
+      "shoulders"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  },
+  {
+    "id": "kettlebell-goblet-lunge",
+    "name": "Kettlebell Goblet Lunge",
+    "primary_muscle": "quads",
+    "secondary_muscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": "kettlebell",
+    "type": "compound"
+  },
+  {
+    "id": "machine-glute-drive",
+    "name": "Machine Glute Drive",
+    "primary_muscle": "glutes",
+    "secondary_muscles": [
+      "hamstrings",
+      "quads"
+    ],
+    "equipment": "machine",
+    "type": "compound"
+  },
+  {
+    "id": "dumbbell-renegade-row",
+    "name": "Dumbbell Renegade Row",
+    "primary_muscle": "back",
+    "secondary_muscles": [
+      "core",
+      "lats",
+      "biceps"
+    ],
+    "equipment": "dumbbell",
+    "type": "compound"
+  }
+]
