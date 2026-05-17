@@ -14,6 +14,9 @@ const unitOptions: ReadonlyArray<{ value: WeightUnit; label: string }> = [
   { value: 'lb', label: 'Pounds (lb)' },
   { value: 'kg', label: 'Kilograms (kg)' },
 ]
+
+// Hide the install guidance once the app is already running installed.
+const isStandalone = window.matchMedia('(display-mode: standalone)').matches
 </script>
 
 <template>
@@ -58,6 +61,22 @@ const unitOptions: ReadonlyArray<{ value: WeightUnit; label: string }> = [
         <p class="settings-note">
           New workouts use this unit. Past workouts keep the unit they were logged in.
         </p>
+      </section>
+
+      <section v-if="!isStandalone" class="settings-section">
+        <h2 class="settings-section__title">Install</h2>
+        <div class="settings-install">
+          <p class="settings-install__lead">
+            Add Hadid to your home screen to use it full-screen, like a native app. It works
+            fully offline.
+          </p>
+          <p class="settings-install__step">
+            <strong>iPhone:</strong> tap the Share button, then Add to Home Screen.
+          </p>
+          <p class="settings-install__step">
+            <strong>Android:</strong> open the browser menu, then Install app.
+          </p>
+        </div>
       </section>
 
       <section class="settings-section">
@@ -136,5 +155,29 @@ const unitOptions: ReadonlyArray<{ value: WeightUnit; label: string }> = [
   margin-top: var(--space-1);
   font-size: var(--text-sm);
   color: var(--color-text-dim);
+}
+
+.settings-install {
+  padding: var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.settings-install__lead {
+  margin-bottom: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-dim);
+}
+
+.settings-install__step {
+  margin-top: var(--space-1);
+  font-size: var(--text-sm);
+  color: var(--color-text-dim);
+}
+
+.settings-install__step strong {
+  color: var(--color-text);
+  font-weight: 700;
 }
 </style>

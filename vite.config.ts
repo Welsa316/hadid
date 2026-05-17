@@ -14,7 +14,7 @@ export default defineConfig({
         // Precache the app shell. exercises-seed.json is intentionally NOT
         // matched here: it is IndexedDB seed data loaded via dynamic import,
         // not a runtime-fetched asset.
-        globPatterns: ['**/*.{js,css,html,svg,woff2}'],
+        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
       },
       manifest: {
         name: 'Hadid',
@@ -27,12 +27,9 @@ export default defineConfig({
         start_url: '/',
         scope: '/',
         icons: [
-          {
-            src: 'icon.svg',
-            sizes: 'any',
-            type: 'image/svg+xml',
-            purpose: 'any maskable',
-          },
+          { src: 'icon.svg', sizes: 'any', type: 'image/svg+xml', purpose: 'any' },
+          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+          { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
         ],
       },
     }),
@@ -45,6 +42,9 @@ export default defineConfig({
   server: {
     // Honour a PORT assigned by the environment; fall back to Vite's default.
     port: Number(process.env.PORT) || 5173,
+  },
+  preview: {
+    port: Number(process.env.PORT) || 4173,
   },
   test: {
     environment: 'happy-dom',
