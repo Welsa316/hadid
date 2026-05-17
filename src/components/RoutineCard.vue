@@ -9,12 +9,12 @@ const emit = defineEmits<{ open: [] }>()
 
 const exercisesStore = useExercisesStore()
 
-const exerciseCount = computed(() => props.routine.exercise_ids.length)
+const exerciseCount = computed(() => props.routine.exercises.length)
 
 const preview = computed(() => {
   const names: string[] = []
-  for (const id of props.routine.exercise_ids) {
-    const name = exercisesStore.byId.get(id)?.name
+  for (const routineExercise of props.routine.exercises) {
+    const name = exercisesStore.byId.get(routineExercise.exercise_id)?.name
     if (name !== undefined) names.push(name)
     if (names.length === 3) break
   }

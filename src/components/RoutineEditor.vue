@@ -3,7 +3,7 @@ import { computed, ref } from 'vue'
 
 import ExercisePicker from './ExercisePicker.vue'
 import ModalSheet from './ModalSheet.vue'
-import type { Routine } from '@/db/schema'
+import type { Routine, RoutineExercise } from '@/db/schema'
 import { useExercisesStore } from '@/stores/exercises'
 import { useRoutinesStore } from '@/stores/routines'
 
@@ -15,27 +15,69 @@ const exercisesStore = useExercisesStore()
 
 const isExisting = props.routine !== null
 
+const SCHEME_PRESETS: ReadonlyArray<{ sets: number; reps: number }> = [
+  { sets: 3, reps: 8 },
+  { sets: 3, reps: 10 },
+  { sets: 3, reps: 12 },
+  { sets: 4, reps: 8 },
+  { sets: 4, reps: 10 },
+  { sets: 5, reps: 5 },
+]
+
 const name = ref(props.routine?.name ?? '')
-const exerciseIds = ref<string[]>([...(props.routine?.exercise_ids ?? [])])
+const exercises = ref<RoutineExercise[]>((props.routine?.exercises ?? []).map((entry) => ({ ...entry })))
 const pickerOpen = ref(false)
+const expandedIndex = ref<number | null>(null)
 const saving = ref(false)
 const editorError = ref<string | null>(null)
 
-const exerciseRows = computed(() =>
-  exerciseIds.value.map((id) => ({
-    id,
-    name: exercisesStore.byId.get(id)?.name ?? 'Unknown exercise',
+const rows = computed(() =>
+  exercises.value.map((entry) => ({
+    ...entry,
+    name: exercisesStore.byId.get(entry.exercise_id)?.name ?? 'Unknown exercise',
   })),
 )
 
 const canSave = computed(() => name.value.trim() !== '' && !saving.value)
 
+function updateExercise(index: number, patch: Partial<RoutineExercise>): void {
+  const current = exercises.value[index]
+  if (current === undefined) return
+  exercises.value[index] = { ...current, ...patch }
+}
+
 function removeExercise(index: number): void {
-  exerciseIds.value.splice(index, 1)
+  exercises.value.splice(index, 1)
+  expandedIndex.value = null
+}
+
+function toggleScheme(index: number): void {
+  expandedIndex.value = expandedIndex.value === index ? null : index
+}
+
+function applyPreset(index: number, sets: number, reps: number): void {
+  updateExercise(index, { target_sets: sets, target_reps: reps })
+  expandedIndex.value = null
+}
+
+function onTargetChange(index: number, field: 'target_sets' | 'target_reps', event: Event): void {
+  const input = event.target as HTMLInputElement
+  const current = exercises.value[index]
+  if (current === undefined) return
+  const value = Math.floor(Number(input.value))
+  if (!Number.isFinite(value) || value < 1) {
+    input.value = String(current[field])
+    return
+  }
+  if (field === 'target_sets') updateExercise(index, { target_sets: Math.min(value, 20) })
+  else updateExercise(index, { target_reps: Math.min(value, 99) })
 }
 
 function onPickerConfirm(ids: string[]): void {
-  exerciseIds.value = [...exerciseIds.value, ...ids]
+  exercises.value = [
+    ...exercises.value,
+    ...ids.map((id) => ({ exercise_id: id, target_sets: 3, target_reps: 10 })),
+  ]
   pickerOpen.value = false
 }
 
@@ -45,11 +87,11 @@ async function handleSave(): Promise<void> {
   editorError.value = null
   try {
     if (props.routine === null) {
-      await routinesStore.create(name.value.trim(), exerciseIds.value)
+      await routinesStore.create(name.value.trim(), exercises.value)
     } else {
       await routinesStore.save(props.routine, {
         name: name.value.trim(),
-        exercise_ids: exerciseIds.value,
+        exercises: exercises.value,
       })
     }
     emit('close')
@@ -97,26 +139,76 @@ async function handleDelete(): Promise<void> {
     <section class="editor-section">
       <h3 class="editor-section__title">
         Exercises
-        <span class="editor-section__count">{{ exerciseRows.length }}</span>
+        <span class="editor-section__count">{{ rows.length }}</span>
       </h3>
 
-      <ul v-if="exerciseRows.length > 0" class="editor-exercises">
+      <ul v-if="rows.length > 0" class="editor-exercises">
         <li
-          v-for="(row, index) in exerciseRows"
-          :key="`${row.id}-${index}`"
+          v-for="(row, index) in rows"
+          :key="`${row.exercise_id}-${index}`"
           class="editor-exercise"
         >
-          <span class="editor-exercise__name">{{ row.name }}</span>
-          <button
-            type="button"
-            class="editor-exercise__remove"
-            :aria-label="`Remove ${row.name}`"
-            @click="removeExercise(index)"
-          >
-            <svg viewBox="0 0 24 24" aria-hidden="true">
-              <path d="M6 6l12 12M18 6L6 18" />
-            </svg>
-          </button>
+          <div class="editor-exercise__main">
+            <span class="editor-exercise__name">{{ row.name }}</span>
+            <button
+              type="button"
+              class="editor-exercise__scheme"
+              :aria-label="`Set scheme for ${row.name}`"
+              @click="toggleScheme(index)"
+            >
+              {{ row.target_sets }} × {{ row.target_reps }}
+            </button>
+            <button
+              type="button"
+              class="editor-exercise__remove"
+              :aria-label="`Remove ${row.name}`"
+              @click="removeExercise(index)"
+            >
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" />
+              </svg>
+            </button>
+          </div>
+
+          <div v-if="expandedIndex === index" class="editor-scheme">
+            <div class="editor-scheme__presets">
+              <button
+                v-for="preset in SCHEME_PRESETS"
+                :key="`${preset.sets}x${preset.reps}`"
+                type="button"
+                class="editor-scheme__preset"
+                :class="{
+                  'editor-scheme__preset--active':
+                    row.target_sets === preset.sets && row.target_reps === preset.reps,
+                }"
+                @click="applyPreset(index, preset.sets, preset.reps)"
+              >
+                {{ preset.sets }}×{{ preset.reps }}
+              </button>
+            </div>
+            <div class="editor-scheme__custom">
+              <label class="editor-scheme__field">
+                <span class="editor-scheme__field-label">Sets</span>
+                <input
+                  class="editor-scheme__input"
+                  type="text"
+                  inputmode="numeric"
+                  :value="row.target_sets"
+                  @change="onTargetChange(index, 'target_sets', $event)"
+                />
+              </label>
+              <label class="editor-scheme__field">
+                <span class="editor-scheme__field-label">Reps</span>
+                <input
+                  class="editor-scheme__input"
+                  type="text"
+                  inputmode="numeric"
+                  :value="row.target_reps"
+                  @change="onTargetChange(index, 'target_reps', $event)"
+                />
+              </label>
+            </div>
+          </div>
         </li>
       </ul>
       <p v-else class="editor-empty">No exercises yet — add some below.</p>
@@ -133,7 +225,7 @@ async function handleDelete(): Promise<void> {
 
   <ExercisePicker
     v-if="pickerOpen"
-    :exclude-ids="exerciseIds"
+    :exclude-ids="exercises.map((entry) => entry.exercise_id)"
     @close="pickerOpen = false"
     @confirm="onPickerConfirm"
   />
@@ -210,14 +302,17 @@ async function handleDelete(): Promise<void> {
 }
 
 .editor-exercise {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.editor-exercise__main {
   display: flex;
   align-items: center;
   gap: var(--space-2);
   min-height: var(--touch-target-min);
   padding-left: var(--space-3);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
 }
 
 .editor-exercise__name {
@@ -227,6 +322,21 @@ async function handleDelete(): Promise<void> {
   font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.editor-exercise__scheme {
+  flex-shrink: 0;
+  height: var(--touch-target-min);
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface-raised);
+  color: var(--color-text);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.editor-exercise__scheme:active {
+  color: var(--color-accent);
 }
 
 .editor-exercise__remove {
@@ -250,6 +360,71 @@ async function handleDelete(): Promise<void> {
   stroke: currentColor;
   stroke-width: 2;
   stroke-linecap: round;
+}
+
+.editor-scheme {
+  padding: var(--space-3);
+  border-top: 1px solid var(--color-border);
+}
+
+.editor-scheme__presets {
+  display: flex;
+  gap: var(--space-2);
+  margin: 0 calc(-1 * var(--space-3)) var(--space-3);
+  padding: 0 var(--space-3);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.editor-scheme__presets::-webkit-scrollbar {
+  display: none;
+}
+
+.editor-scheme__preset {
+  flex-shrink: 0;
+  min-height: var(--touch-target-min);
+  padding: 0 var(--space-3);
+  background-color: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-dim);
+  font-size: var(--text-sm);
+  font-weight: 700;
+}
+
+.editor-scheme__preset--active {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.editor-scheme__custom {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.editor-scheme__field {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.editor-scheme__field-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text-faint);
+}
+
+.editor-scheme__input {
+  width: 100%;
+  min-height: var(--touch-target-min);
+  padding: 0 var(--space-3);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-weight: 600;
 }
 
 .editor-empty {

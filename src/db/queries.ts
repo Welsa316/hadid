@@ -212,6 +212,28 @@ export async function getAllSets(): Promise<WorkoutSet[]> {
   return sets.filter((set) => set.deleted_at === null)
 }
 
+/**
+ * Sets for an exercise from its most recent *completed* workout, excluding the
+ * given workout. Powers the "last time" hint shown while logging.
+ */
+export async function getLastWorkoutSetsForExercise(
+  exerciseId: string,
+  excludeWorkoutId: string,
+): Promise<WorkoutSet[]> {
+  const sets = await getSetsByExercise(exerciseId)
+  const completedIds = new Set((await getCompletedWorkouts()).map((workout) => workout.id))
+  const priorSets = sets.filter(
+    (set) => set.workout_id !== excludeWorkoutId && completedIds.has(set.workout_id),
+  )
+  if (priorSets.length === 0) return []
+  const latest = priorSets.reduce((best, set) =>
+    (set.completed_at ?? 0) > (best.completed_at ?? 0) ? set : best,
+  )
+  return priorSets
+    .filter((set) => set.workout_id === latest.workout_id)
+    .sort((a, b) => a.set_number - b.set_number)
+}
+
 export async function createSet(set: WorkoutSet): Promise<void> {
   await persistMutation('sets', set, 'create')
 }

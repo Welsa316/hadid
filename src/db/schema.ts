@@ -85,9 +85,18 @@ export interface Exercise extends SyncedRecord {
   is_custom: boolean
 }
 
+/** An exercise within a routine, with its default per-session set/rep targets. */
+export interface RoutineExercise {
+  exercise_id: string
+  target_sets: number
+  target_reps: number
+}
+
 export interface Routine extends SyncedRecord {
   name: string
-  exercise_ids: string[]
+  /** Ordered exercises with their set/rep targets. Starting a workout from
+   *  the routine pre-creates this many set rows per exercise. */
+  exercises: RoutineExercise[]
   /** User-defined sort position within the routine list. */
   order: number
 }

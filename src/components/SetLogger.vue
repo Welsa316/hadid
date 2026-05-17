@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 
+import { getLastWorkoutSetsForExercise } from '@/db/queries'
 import type { WorkoutSet } from '@/db/schema'
 import { useExercisesStore } from '@/stores/exercises'
 import { useWorkoutsStore } from '@/stores/workouts'
@@ -18,6 +19,22 @@ const sets = computed(() =>
   workoutsStore.activeSets
     .filter((set) => set.exercise_id === props.exerciseId)
     .sort((a, b) => a.set_number - b.set_number),
+)
+
+const lastTimeSets = ref<WorkoutSet[]>([])
+
+onMounted(async () => {
+  const workout = workoutsStore.active
+  if (workout === null) return
+  try {
+    lastTimeSets.value = await getLastWorkoutSetsForExercise(props.exerciseId, workout.id)
+  } catch (cause: unknown) {
+    console.error('[hadid] failed to load last-time sets', cause)
+  }
+})
+
+const lastTimeLabel = computed(() =>
+  lastTimeSets.value.map((set) => `${set.weight}×${set.reps}`).join('  ·  '),
 )
 
 function addSet(): void {
@@ -43,7 +60,10 @@ function commitField(set: WorkoutSet, field: 'weight' | 'reps', event: Event): v
 
 <template>
   <section class="set-logger">
-    <h3 class="set-logger__name">{{ exerciseName }}</h3>
+    <div class="set-logger__header">
+      <h3 class="set-logger__name">{{ exerciseName }}</h3>
+      <p v-if="lastTimeLabel !== ''" class="set-logger__last">Last time: {{ lastTimeLabel }}</p>
+    </div>
 
     <div v-if="sets.length > 0" class="set-logger__table">
       <div class="set-logger__head">
@@ -96,10 +116,19 @@ function commitField(set: WorkoutSet, field: 'weight' | 'reps', event: Event): v
   border-radius: var(--radius-lg);
 }
 
-.set-logger__name {
+.set-logger__header {
   margin-bottom: var(--space-3);
+}
+
+.set-logger__name {
   font-size: var(--text-lg);
   font-weight: 700;
+}
+
+.set-logger__last {
+  margin-top: 2px;
+  font-size: var(--text-xs);
+  color: var(--color-text-faint);
 }
 
 .set-logger__head,

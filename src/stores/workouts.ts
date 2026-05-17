@@ -67,7 +67,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
       duration_seconds: 0,
       notes: '',
       local_date: todayLocalDate(),
-      exercise_ids: routine !== null ? [...routine.exercise_ids] : [],
+      exercise_ids: routine !== null ? routine.exercises.map((entry) => entry.exercise_id) : [],
       weight_unit: settingsStore.unit,
       total_volume: 0,
       set_count: 0,
@@ -78,13 +78,46 @@ export const useWorkoutsStore = defineStore('workouts', () => {
       last_synced_at: null,
       _v: 1,
     }
+
+    // Pre-create set rows from the routine's per-exercise targets, auto-filling
+    // each set's weight from that exercise's last logged set.
+    const sets: WorkoutSet[] = []
+    if (routine !== null) {
+      for (const entry of routine.exercises) {
+        const last = await getLastSetForExercise(entry.exercise_id)
+        const weight =
+          last !== undefined && last.weight_unit === workout.weight_unit ? last.weight : 0
+        for (let number = 1; number <= entry.target_sets; number += 1) {
+          sets.push({
+            id: uuidv7(),
+            workout_id: workout.id,
+            exercise_id: entry.exercise_id,
+            set_number: number,
+            reps: entry.target_reps,
+            weight,
+            weight_unit: workout.weight_unit,
+            is_warmup: false,
+            is_pr: false,
+            completed_at: now,
+            created_at: now,
+            updated_at: now,
+            deleted_at: null,
+            last_synced_at: null,
+            _v: 1,
+          })
+        }
+      }
+    }
+
     active.value = workout
-    activeSets.value = []
+    activeSets.value = sets
     try {
       await createWorkout(workout)
+      for (const set of sets) await createSet(set)
       await setMeta(ACTIVE_WORKOUT_KEY, workout.id)
     } catch (cause: unknown) {
       active.value = null
+      activeSets.value = []
       console.error('[hadid] failed to start workout', cause)
       throw cause
     }

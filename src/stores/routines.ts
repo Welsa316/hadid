@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { v7 as uuidv7 } from 'uuid'
 
-import type { Routine } from '@/db/schema'
+import type { Routine, RoutineExercise } from '@/db/schema'
 import { createRoutine, getAllRoutines, removeRoutine, updateRoutine } from '@/db/queries'
 
 /**
@@ -31,12 +31,12 @@ export const useRoutinesStore = defineStore('routines', () => {
     }
   }
 
-  async function create(name: string, exerciseIds: string[]): Promise<Routine> {
+  async function create(name: string, exercises: RoutineExercise[]): Promise<Routine> {
     const now = Date.now()
     const routine: Routine = {
       id: uuidv7(),
       name,
-      exercise_ids: exerciseIds,
+      exercises,
       order: all.value.length,
       created_at: now,
       updated_at: now,
@@ -54,7 +54,10 @@ export const useRoutinesStore = defineStore('routines', () => {
     return routine
   }
 
-  async function save(routine: Routine, patch: { name: string; exercise_ids: string[] }): Promise<void> {
+  async function save(
+    routine: Routine,
+    patch: { name: string; exercises: RoutineExercise[] },
+  ): Promise<void> {
     const index = all.value.findIndex((entry) => entry.id === routine.id)
     const previous = index >= 0 ? all.value[index] : undefined
     const updated: Routine = { ...routine, ...patch, updated_at: Date.now() }
