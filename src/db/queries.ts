@@ -10,6 +10,7 @@ import type {
   OutboxEntity,
   OutboxOp,
   Routine,
+  Workout,
 } from './schema'
 
 /** Bundled-library version. Bump to re-seed/upsert the exercise library. */
@@ -143,4 +144,19 @@ export async function updateRoutine(routine: Routine): Promise<void> {
 /** Persists a soft-deleted routine (caller sets `deleted_at`). */
 export async function removeRoutine(routine: Routine): Promise<void> {
   await persistMutation('routines', routine, 'delete')
+}
+
+/* --- workouts ---------------------------------------------------------- */
+
+export async function getWorkout(id: string): Promise<Workout | undefined> {
+  const db = await getDB()
+  return db.get('workouts', id)
+}
+
+export async function createWorkout(workout: Workout): Promise<void> {
+  await persistMutation('workouts', workout, 'create')
+}
+
+export async function updateWorkout(workout: Workout): Promise<void> {
+  await persistMutation('workouts', workout, 'update')
 }

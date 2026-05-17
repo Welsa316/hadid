@@ -102,6 +102,10 @@ export interface Workout extends SyncedRecord {
   /** Local calendar day (YYYY-MM-DD) the workout belongs to — avoids the
    *  UTC-bucketing bug where a late-evening workout lands on the wrong day. */
   local_date: string
+  /** Ordered exercise lineup for the workout — seeded from a routine, or
+   *  built up as exercises are added. Distinct from logged sets: an exercise
+   *  can be in the lineup with zero sets (skipped). */
+  exercise_ids: string[]
 }
 
 /** A single logged set. Named `WorkoutSet` to avoid clashing with the JS `Set`. */
