@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 
 import type { Exercise } from '@/db/schema'
 import { getAllExercises, seedExercisesIfNeeded } from '@/db/queries'
@@ -13,6 +13,13 @@ export const useExercisesStore = defineStore('exercises', () => {
   const loading = ref(false)
   const hydrated = ref(false)
   const error = ref<string | null>(null)
+
+  /** Exercises keyed by id, for fast lookup when resolving routine/set rows. */
+  const byId = computed(() => {
+    const map = new Map<string, Exercise>()
+    for (const exercise of all.value) map.set(exercise.id, exercise)
+    return map
+  })
 
   async function hydrate(): Promise<void> {
     if (hydrated.value || loading.value) return
@@ -30,5 +37,5 @@ export const useExercisesStore = defineStore('exercises', () => {
     }
   }
 
-  return { all, loading, hydrated, error, hydrate }
+  return { all, byId, loading, hydrated, error, hydrate }
 })

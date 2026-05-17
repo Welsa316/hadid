@@ -1,5 +1,16 @@
+import { v7 as uuidv7 } from 'uuid'
+
 import { getDB } from './schema'
-import type { Equipment, Exercise, ExerciseType, MuscleGroup } from './schema'
+import type {
+  Equipment,
+  Exercise,
+  ExerciseType,
+  HadidDB,
+  MuscleGroup,
+  OutboxEntity,
+  OutboxOp,
+  Routine,
+} from './schema'
 
 /** Bundled-library version. Bump to re-seed/upsert the exercise library. */
 const SEED_VERSION = 1
@@ -64,4 +75,72 @@ export async function getAllExercises(): Promise<Exercise[]> {
   const db = await getDB()
   const all = await db.getAll('exercises')
   return all.filter((exercise) => exercise.deleted_at === null)
+}
+
+/* --- write-through mutations ------------------------------------------ *
+ * Every user mutation writes the record and an outbox entry in a single
+ * transaction. The outbox is the ordered change log a future cloud-sync
+ * layer will replay; pairing the two writes keeps them consistent.        */
+
+type SyncStoreName = 'routines' | 'workouts' | 'sets' | 'prs'
+
+const OUTBOX_ENTITY_BY_STORE: Record<SyncStoreName, OutboxEntity> = {
+  routines: 'routine',
+  workouts: 'workout',
+  sets: 'set',
+  prs: 'pr',
+}
+
+/**
+ * Deep-clones a record into a plain object. Records reaching this layer often
+ * carry Vue reactive proxies (e.g. arrays bound to component state), and
+ * IndexedDB's structured clone throws on a Proxy. A JSON round-trip is safe
+ * here because every stored record is pure JSON data.
+ */
+function toPlain<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T
+}
+
+async function persistMutation<S extends SyncStoreName>(
+  store: S,
+  record: HadidDB[S]['value'],
+  op: OutboxOp,
+): Promise<void> {
+  const plain = toPlain(record)
+  const db = await getDB()
+  const tx = db.transaction([store, 'outbox'], 'readwrite')
+  void tx.objectStore(store).put(plain)
+  void tx.objectStore('outbox').put({
+    id: uuidv7(),
+    entity: OUTBOX_ENTITY_BY_STORE[store],
+    entity_id: plain.id,
+    op,
+    payload: plain,
+    created_at: Date.now(),
+    attempts: 0,
+    last_error: null,
+  })
+  await tx.done
+}
+
+/* --- routines ---------------------------------------------------------- */
+
+/** All non-deleted routines. */
+export async function getAllRoutines(): Promise<Routine[]> {
+  const db = await getDB()
+  const all = await db.getAll('routines')
+  return all.filter((routine) => routine.deleted_at === null)
+}
+
+export async function createRoutine(routine: Routine): Promise<void> {
+  await persistMutation('routines', routine, 'create')
+}
+
+export async function updateRoutine(routine: Routine): Promise<void> {
+  await persistMutation('routines', routine, 'update')
+}
+
+/** Persists a soft-deleted routine (caller sets `deleted_at`). */
+export async function removeRoutine(routine: Routine): Promise<void> {
+  await persistMutation('routines', routine, 'delete')
 }
