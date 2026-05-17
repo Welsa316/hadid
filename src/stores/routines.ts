@@ -31,6 +31,15 @@ export const useRoutinesStore = defineStore('routines', () => {
     }
   }
 
+  /** Re-reads routines from storage — used after a sync pulls changes. */
+  async function refresh(): Promise<void> {
+    try {
+      all.value = await getAllRoutines()
+    } catch (cause: unknown) {
+      console.error('[hadid] failed to refresh routines', cause)
+    }
+  }
+
   async function create(name: string, exercises: RoutineExercise[]): Promise<Routine> {
     const now = Date.now()
     const routine: Routine = {
@@ -85,5 +94,5 @@ export const useRoutinesStore = defineStore('routines', () => {
     }
   }
 
-  return { all, loading, hydrated, error, hydrate, create, save, remove }
+  return { all, loading, hydrated, error, hydrate, refresh, create, save, remove }
 })

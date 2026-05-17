@@ -56,6 +56,25 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     }
   }
 
+  /** Re-reads the active workout from storage — used after a sync pulls changes. */
+  async function refresh(): Promise<void> {
+    try {
+      const activeId = await getMeta<string | null>(ACTIVE_WORKOUT_KEY)
+      if (typeof activeId === 'string') {
+        const workout = await getWorkout(activeId)
+        if (workout !== undefined && workout.status === 'active') {
+          active.value = workout
+          activeSets.value = await getSetsByWorkout(workout.id)
+          return
+        }
+      }
+      active.value = null
+      activeSets.value = []
+    } catch (cause: unknown) {
+      console.error('[hadid] failed to refresh workouts', cause)
+    }
+  }
+
   async function start(routine: Routine | null): Promise<Workout> {
     const now = Date.now()
     const workout: Workout = {
@@ -281,6 +300,7 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     hydrated,
     error,
     hydrate,
+    refresh,
     start,
     finish,
     discard,

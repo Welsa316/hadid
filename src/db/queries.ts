@@ -9,9 +9,11 @@ import type {
   HadidDB,
   MuscleGroup,
   OutboxEntity,
+  OutboxEntry,
   OutboxOp,
   PersonalRecord,
   Routine,
+  SyncedRecord,
   Workout,
   WorkoutSet,
 } from './schema'
@@ -297,5 +299,61 @@ export async function detectWorkoutPrs(
       })
       if (!set.is_pr) await updateSet({ ...set, is_pr: true, updated_at: now })
     }
+  }
+}
+
+/* --- sync support ----------------------------------------------------- *
+ * The sync engine drains the outbox to the server and writes pulled records
+ * back. A pulled write bypasses `persistMutation` so a synced change is not
+ * re-logged to the outbox and echoed back on the next push.                */
+
+/** All pending outbox entries, oldest first — the order the server replays. */
+export async function getOutboxEntries(): Promise<OutboxEntry[]> {
+  const db = await getDB()
+  return db.getAllFromIndex('outbox', 'by_created_at')
+}
+
+/** Drops outbox entries once the server has accepted them. */
+export async function deleteOutboxEntries(ids: string[]): Promise<void> {
+  if (ids.length === 0) return
+  const db = await getDB()
+  const tx = db.transaction('outbox', 'readwrite')
+  for (const id of ids) void tx.store.delete(id)
+  await tx.done
+}
+
+/** Writes a record only when it is strictly newer than the local copy. */
+async function putIfNewer<S extends SyncStoreName>(
+  store: S,
+  record: HadidDB[S]['value'],
+): Promise<boolean> {
+  const db = await getDB()
+  const local = await db.get(store, record.id)
+  if (local !== undefined && local.updated_at >= record.updated_at) return false
+  await db.put(store, record)
+  return true
+}
+
+/**
+ * Applies a record pulled from the sync server to its local store,
+ * last-write-wins. Returns whether the local store actually changed. A
+ * soft-deleted record rides along as a normal record whose `deleted_at` is
+ * set, so deletions propagate like any other change.
+ */
+export async function applyRemoteRecord(
+  entity: OutboxEntity,
+  record: SyncedRecord,
+): Promise<boolean> {
+  switch (entity) {
+    case 'routine':
+      return putIfNewer('routines', record as Routine)
+    case 'workout':
+      return putIfNewer('workouts', record as Workout)
+    case 'set':
+      return putIfNewer('sets', record as WorkoutSet)
+    case 'pr':
+      return putIfNewer('prs', record as PersonalRecord)
+    default:
+      return false
   }
 }

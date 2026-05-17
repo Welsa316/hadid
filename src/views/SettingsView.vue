@@ -1,9 +1,13 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue'
+
 import type { WeightUnit } from '@/db/schema'
 import { useSettingsStore } from '@/stores/settings'
 import type { Theme } from '@/stores/settings'
+import { useSyncStore } from '@/stores/sync'
 
 const settings = useSettingsStore()
+const sync = useSyncStore()
 
 const themeOptions: ReadonlyArray<{ value: Theme; label: string }> = [
   { value: 'dark', label: 'Dark' },
@@ -17,6 +21,53 @@ const unitOptions: ReadonlyArray<{ value: WeightUnit; label: string }> = [
 
 // Hide the install guidance once the app is already running installed.
 const isStandalone = window.matchMedia('(display-mode: standalone)').matches
+
+const linkCode = ref('')
+const copied = ref(false)
+
+const syncStatusText = computed(() => {
+  switch (sync.status) {
+    case 'syncing':
+      return 'Syncing…'
+    case 'error':
+      return sync.error ?? 'Sync failed'
+    case 'idle':
+      return sync.lastSyncedAt === null
+        ? 'Not synced yet'
+        : `Last synced ${new Date(sync.lastSyncedAt).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          })}`
+    default:
+      return ''
+  }
+})
+
+async function copyCode(): Promise<void> {
+  try {
+    await navigator.clipboard.writeText(sync.syncCode)
+    copied.value = true
+    window.setTimeout(() => {
+      copied.value = false
+    }, 2000)
+  } catch {
+    /* clipboard unavailable in this context */
+  }
+}
+
+async function linkDevice(): Promise<void> {
+  const code = linkCode.value.trim()
+  if (code.length < 8) return
+  if (
+    !window.confirm(
+      'Link this device to that sync code? Your current data will be merged into it.',
+    )
+  ) {
+    return
+  }
+  await sync.linkDevice(code)
+  linkCode.value = ''
+}
 </script>
 
 <template>
@@ -61,6 +112,60 @@ const isStandalone = window.matchMedia('(display-mode: standalone)').matches
         <p class="settings-note">
           New workouts use this unit. Past workouts keep the unit they were logged in.
         </p>
+      </section>
+
+      <section v-if="sync.status !== 'disabled'" class="settings-section">
+        <h2 class="settings-section__title">Sync</h2>
+        <div class="settings-sync">
+          <p class="settings-sync__status">
+            <span
+              class="settings-sync__dot"
+              :class="`settings-sync__dot--${sync.status}`"
+              aria-hidden="true"
+            />
+            {{ syncStatusText }}
+          </p>
+
+          <p class="settings-sync__label">Your sync code</p>
+          <div class="settings-sync__code">
+            <code class="settings-sync__value">{{ sync.syncCode }}</code>
+            <button type="button" class="settings-sync__action" @click="copyCode">
+              {{ copied ? 'Copied' : 'Copy' }}
+            </button>
+          </div>
+          <p class="settings-note">
+            Enter this code on another device to sync the same data. It is the only key
+            to your data — keep it private.
+          </p>
+
+          <label class="settings-sync__label" for="sync-link-input">Link another device</label>
+          <div class="settings-sync__code">
+            <input
+              id="sync-link-input"
+              v-model="linkCode"
+              type="text"
+              class="settings-sync__input"
+              placeholder="Paste a sync code"
+            />
+            <button
+              type="button"
+              class="settings-sync__action"
+              :disabled="linkCode.trim().length < 8"
+              @click="linkDevice"
+            >
+              Link
+            </button>
+          </div>
+
+          <button
+            type="button"
+            class="settings-sync__now"
+            :disabled="sync.status === 'syncing'"
+            @click="sync.syncNow()"
+          >
+            Sync now
+          </button>
+        </div>
       </section>
 
       <section v-if="!isStandalone" class="settings-section">
@@ -179,5 +284,118 @@ const isStandalone = window.matchMedia('(display-mode: standalone)').matches
 .settings-install__step strong {
   color: var(--color-text);
   font-weight: 700;
+}
+
+.settings-sync {
+  padding: var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.settings-sync__status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.settings-sync__dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-text-faint);
+}
+
+.settings-sync__dot--idle {
+  background-color: var(--color-success);
+}
+
+.settings-sync__dot--syncing {
+  background-color: var(--color-accent);
+}
+
+.settings-sync__dot--error {
+  background-color: var(--color-danger);
+}
+
+.settings-sync__label {
+  display: block;
+  margin-top: var(--space-4);
+  margin-bottom: var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.settings-sync__code {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.settings-sync__value {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-2) var(--space-3);
+  background-color: var(--color-surface-raised);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  word-break: break-all;
+}
+
+.settings-sync__input {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--touch-target-min);
+  padding: 0 var(--space-3);
+  background-color: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+}
+
+.settings-sync__action {
+  flex-shrink: 0;
+  min-height: var(--touch-target-min);
+  padding: 0 var(--space-3);
+  background-color: var(--color-surface-raised);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-accent);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.settings-sync__action:not(:disabled):active {
+  background-color: var(--color-border);
+}
+
+.settings-sync__action:disabled {
+  color: var(--color-text-faint);
+}
+
+.settings-sync__now {
+  width: 100%;
+  min-height: var(--touch-target-min);
+  margin-top: var(--space-4);
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.settings-sync__now:not(:disabled):active {
+  background-color: var(--color-surface-raised);
+}
+
+.settings-sync__now:disabled {
+  color: var(--color-text-faint);
 }
 </style>
