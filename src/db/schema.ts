@@ -106,6 +106,11 @@ export interface Workout extends SyncedRecord {
    *  built up as exercises are added. Distinct from logged sets: an exercise
    *  can be in the lineup with zero sets (skipped). */
   exercise_ids: string[]
+  /** Summary fields, computed once when the workout is completed (0 while
+   *  active). Denormalized so the history list never has to load sets. */
+  total_volume: number
+  set_count: number
+  exercise_count: number
 }
 
 /** A single logged set. Named `WorkoutSet` to avoid clashing with the JS `Set`. */

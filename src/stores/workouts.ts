@@ -16,6 +16,7 @@ import {
   updateWorkout,
 } from '@/db/queries'
 import { todayLocalDate } from '@/utils/dates'
+import { workoutVolume } from '@/utils/volume-calc'
 
 const ACTIVE_WORKOUT_KEY = 'active_workout_id'
 
@@ -63,6 +64,9 @@ export const useWorkoutsStore = defineStore('workouts', () => {
       notes: '',
       local_date: todayLocalDate(),
       exercise_ids: routine !== null ? [...routine.exercise_ids] : [],
+      total_volume: 0,
+      set_count: 0,
+      exercise_count: 0,
       created_at: now,
       updated_at: now,
       deleted_at: null,
@@ -87,11 +91,15 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     const workout = active.value
     if (workout === null) return
     const now = Date.now()
+    const sets = activeSets.value
     const completed: Workout = {
       ...workout,
       status: 'completed',
       ended_at: now,
       duration_seconds: Math.floor((now - workout.started_at) / 1000),
+      total_volume: workoutVolume(sets),
+      set_count: sets.length,
+      exercise_count: new Set(sets.map((set) => set.exercise_id)).size,
       updated_at: now,
     }
     active.value = null

@@ -162,6 +162,15 @@ export async function updateWorkout(workout: Workout): Promise<void> {
   await persistMutation('workouts', workout, 'update')
 }
 
+/** Completed workouts, most recent first. */
+export async function getCompletedWorkouts(): Promise<Workout[]> {
+  const db = await getDB()
+  const all = await db.getAllFromIndex('workouts', 'by_status', 'completed')
+  return all
+    .filter((workout) => workout.deleted_at === null)
+    .sort((a, b) => b.started_at - a.started_at)
+}
+
 /* --- sets -------------------------------------------------------------- */
 
 /** All non-deleted sets belonging to a workout. */

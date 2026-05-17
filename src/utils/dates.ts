@@ -25,3 +25,30 @@ export function formatDuration(totalSeconds: number): string {
   const ss = String(secs).padStart(2, '0')
   return hours > 0 ? `${hours}:${mm}:${ss}` : `${minutes}:${ss}`
 }
+
+/** Formats a workout's date as `Today`, `Yesterday`, or e.g. `Mon, May 12`. */
+export function formatWorkoutDate(epochMs: number): string {
+  const date = localDateOf(epochMs)
+  if (date === todayLocalDate()) return 'Today'
+
+  const yesterday = new Date()
+  yesterday.setDate(yesterday.getDate() - 1)
+  if (date === localDateOf(yesterday.getTime())) return 'Yesterday'
+
+  const options: Intl.DateTimeFormatOptions = {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  }
+  if (new Date(epochMs).getFullYear() !== new Date().getFullYear()) {
+    options.year = 'numeric'
+  }
+  return new Date(epochMs).toLocaleDateString(undefined, options)
+}
+
+/** Compact elapsed duration for summaries: `45m` or `1h 20m`. */
+export function formatDurationShort(totalSeconds: number): string {
+  const minutes = Math.max(0, Math.round(totalSeconds / 60))
+  if (minutes < 60) return `${minutes}m`
+  return `${Math.floor(minutes / 60)}h ${minutes % 60}m`
+}
