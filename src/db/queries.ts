@@ -205,6 +205,13 @@ export async function getSetsByExercise(exerciseId: string): Promise<WorkoutSet[
   return sets.filter((set) => set.deleted_at === null)
 }
 
+/** Every non-deleted set. Used by the calendar to aggregate muscle volume. */
+export async function getAllSets(): Promise<WorkoutSet[]> {
+  const db = await getDB()
+  const sets = await db.getAll('sets')
+  return sets.filter((set) => set.deleted_at === null)
+}
+
 export async function createSet(set: WorkoutSet): Promise<void> {
   await persistMutation('sets', set, 'create')
 }
