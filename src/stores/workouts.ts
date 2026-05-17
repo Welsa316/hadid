@@ -65,6 +65,30 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     return workout
   }
 
+  /** Completes the active workout, recording its duration, and saves it. */
+  async function finish(): Promise<void> {
+    const workout = active.value
+    if (workout === null) return
+    const now = Date.now()
+    const completed: Workout = {
+      ...workout,
+      status: 'completed',
+      ended_at: now,
+      duration_seconds: Math.floor((now - workout.started_at) / 1000),
+      updated_at: now,
+    }
+    active.value = null
+    try {
+      await updateWorkout(completed)
+      await setMeta(ACTIVE_WORKOUT_KEY, null)
+    } catch (cause: unknown) {
+      active.value = workout
+      console.error('[hadid] failed to finish workout', cause)
+      throw cause
+    }
+  }
+
+  /** Abandons the active workout — marks it discarded, keeps nothing. */
   async function discard(): Promise<void> {
     const workout = active.value
     if (workout === null) return
@@ -81,5 +105,5 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     }
   }
 
-  return { active, hydrated, error, hydrate, start, discard }
+  return { active, hydrated, error, hydrate, start, finish, discard }
 })

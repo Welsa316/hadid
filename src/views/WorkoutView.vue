@@ -11,7 +11,7 @@ const workoutsStore = useWorkoutsStore()
 const exercisesStore = useExercisesStore()
 
 const elapsedSeconds = ref(0)
-const discardError = ref<string | null>(null)
+const actionError = ref<string | null>(null)
 let timerId: number | undefined
 
 function tick(): void {
@@ -38,14 +38,24 @@ const exercises = computed(() => {
   }))
 })
 
+async function finishWorkout(): Promise<void> {
+  actionError.value = null
+  try {
+    await workoutsStore.finish()
+    await router.push('/')
+  } catch {
+    actionError.value = 'Could not finish the workout. Please try again.'
+  }
+}
+
 async function discardWorkout(): Promise<void> {
   if (!window.confirm('Discard this workout? Nothing will be saved.')) return
-  discardError.value = null
+  actionError.value = null
   try {
     await workoutsStore.discard()
     await router.push('/')
   } catch {
-    discardError.value = 'Could not discard the workout. Please try again.'
+    actionError.value = 'Could not discard the workout. Please try again.'
   }
 }
 </script>
@@ -55,11 +65,11 @@ async function discardWorkout(): Promise<void> {
     <template v-if="workoutsStore.active">
       <header class="page__header">
         <span class="workout-timer">{{ formatDuration(elapsedSeconds) }}</span>
-        <button type="button" class="workout-discard" @click="discardWorkout">Discard</button>
+        <button type="button" class="workout-finish" @click="finishWorkout">Finish</button>
       </header>
 
       <div class="page__body">
-        <p v-if="discardError" class="workout-error" role="alert">{{ discardError }}</p>
+        <p v-if="actionError" class="workout-error" role="alert">{{ actionError }}</p>
 
         <ul v-if="exercises.length > 0" class="workout-exercises">
           <li
@@ -71,6 +81,10 @@ async function discardWorkout(): Promise<void> {
           </li>
         </ul>
         <p v-else class="page__placeholder">This workout has no exercises yet.</p>
+
+        <button type="button" class="workout-discard" @click="discardWorkout">
+          Discard workout
+        </button>
       </div>
     </template>
 
@@ -93,17 +107,18 @@ async function discardWorkout(): Promise<void> {
   font-variant-numeric: tabular-nums;
 }
 
-.workout-discard {
+.workout-finish {
   min-height: var(--touch-target-min);
-  padding: 0 var(--space-3);
-  border-radius: var(--radius-sm);
-  color: var(--color-danger);
-  font-size: var(--text-sm);
+  padding: 0 var(--space-4);
+  background-color: var(--color-accent);
+  border-radius: var(--radius-full);
+  color: var(--color-on-accent);
+  font-size: var(--text-base);
   font-weight: 700;
 }
 
-.workout-discard:active {
-  background-color: var(--color-surface);
+.workout-finish:active {
+  background-color: var(--color-accent-pressed);
 }
 
 .workout-error {
@@ -125,5 +140,20 @@ async function discardWorkout(): Promise<void> {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   font-weight: 600;
+}
+
+.workout-discard {
+  width: 100%;
+  min-height: var(--touch-target-min);
+  margin-top: auto;
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+.workout-discard:active {
+  background-color: var(--color-surface);
 }
 </style>
