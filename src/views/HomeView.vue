@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+import BrandLogo from '@/components/BrandLogo.vue'
 import RoutineCard from '@/components/RoutineCard.vue'
 import type { Routine } from '@/db/schema'
 import { useRoutinesStore } from '@/stores/routines'
@@ -32,7 +33,7 @@ async function startWorkout(routine: Routine | null): Promise<void> {
 <template>
   <main class="page">
     <header class="page__header">
-      <h1 class="page__title">Hadid</h1>
+      <h1 class="home-brand"><BrandLogo /></h1>
     </header>
 
     <div class="page__body">
@@ -76,6 +77,10 @@ async function startWorkout(routine: Routine | null): Promise<void> {
 </template>
 
 <style scoped>
+.home-brand {
+  display: flex;
+}
+
 .resume-card {
   display: flex;
   align-items: center;
