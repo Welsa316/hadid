@@ -11,9 +11,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
       workbox: {
-        // Precache the app shell. exercises-seed.json is intentionally NOT
-        // matched here: it is IndexedDB seed data loaded via dynamic import,
-        // not a runtime-fetched asset.
+        // Precache the app shell and every lazy route chunk so all screens
+        // work offline — including the dynamically-imported exercises-seed
+        // chunk, so the library can seed even if the first launch is offline.
         globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
       },
       manifest: {

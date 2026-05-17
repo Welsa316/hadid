@@ -13,7 +13,8 @@
   /* --- Text ------------------------------------------------------ */
   --color-text: #f5f5f6;
   --color-text-dim: #a0a0a8;
-  --color-text-faint: #6b6b73;
+  /* Lightened to clear WCAG AA (4.5:1) on both --color-bg and --color-surface. */
+  --color-text-faint: #8a8a93;
 
   /* --- Accent (ember — "hadid" is Arabic for iron) --------------- */
   --color-accent: #ff6b35;
