@@ -12,6 +12,26 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Hadid" />
     <title>Hadid</title>
+    <style>
+      html {
+        background-color: #0f0f10;
+      }
+      html[data-theme='light'] {
+        background-color: #f6f6f7;
+      }
+    </style>
+    <script>
+      // Apply the saved theme before first paint to avoid a flash of the
+      // wrong theme. The full settings store re-reads this later.
+      ;(function () {
+        try {
+          var t = localStorage.getItem('hadid:theme')
+          if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t
+        } catch (e) {
+          /* localStorage unavailable — fall back to the default theme */
+        }
+      })()
+    </script>
   </head>
   <body>
     <div id="app"></div>

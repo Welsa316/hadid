@@ -85,3 +85,35 @@
   --z-modal: 200;
   --z-toast: 300;
 }
+
+/* Light theme — surfaces and text invert; the ember accent stays, darkened
+   for legible contrast on light backgrounds. */
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --color-bg: #f6f6f7;
+  --color-surface: #ffffff;
+  --color-surface-raised: #ececef;
+  --color-border: #dcdce1;
+
+  --color-text: #18181b;
+  --color-text-dim: #5b5b63;
+  --color-text-faint: #6c6c74;
+
+  --color-accent: #d9480f;
+  --color-accent-pressed: #b8390a;
+  --color-on-accent: #ffffff;
+
+  --color-success: #2f9e44;
+  --color-danger: #c92a2a;
+
+  --muscle-chest: #e03131;
+  --muscle-back: #1971c2;
+  --muscle-legs: #6741d9;
+  --muscle-shoulders: #e8830a;
+  --muscle-arms: #2f9e44;
+  --muscle-core: #e8590c;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.14);
+}
