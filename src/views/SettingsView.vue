@@ -1,13 +1,18 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
+import { CHANGELOG } from '@/data/changelog'
 import type { WeightUnit } from '@/db/schema'
 import { useSettingsStore } from '@/stores/settings'
 import type { Theme } from '@/stores/settings'
 import { useSyncStore } from '@/stores/sync'
 
+const router = useRouter()
 const settings = useSettingsStore()
 const sync = useSyncStore()
+
+const currentVersion = CHANGELOG[0]?.version ?? ''
 
 const themeOptions: ReadonlyArray<{ value: Theme; label: string }> = [
   { value: 'dark', label: 'Dark' },
@@ -185,10 +190,22 @@ async function linkDevice(): Promise<void> {
       </section>
 
       <section class="settings-section">
+        <h2 class="settings-section__title">What's new</h2>
+        <button
+          type="button"
+          class="settings-link"
+          @click="router.push('/settings/changelog')"
+        >
+          <span>See updates and changes</span>
+          <span class="settings-link__arrow" aria-hidden="true">→</span>
+        </button>
+      </section>
+
+      <section class="settings-section">
         <h2 class="settings-section__title">About</h2>
         <div class="settings-about">
           <p class="settings-about__name">Hadid</p>
-          <p class="settings-about__line">Version 0.1.0</p>
+          <p class="settings-about__line">Version {{ currentVersion }}</p>
           <p class="settings-about__line">An offline-first workout tracker.</p>
         </div>
       </section>
@@ -397,5 +414,30 @@ async function linkDevice(): Promise<void> {
 
 .settings-sync__now:disabled {
   color: var(--color-text-faint);
+}
+
+.settings-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-height: var(--touch-target-min);
+  padding: 0 var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-weight: 600;
+  text-align: left;
+}
+
+.settings-link:active {
+  background-color: var(--color-surface-raised);
+}
+
+.settings-link__arrow {
+  flex-shrink: 0;
+  color: var(--color-accent);
+  font-size: var(--text-base);
 }
 </style>

@@ -1,0 +1,18 @@
+[
+  {
+    "version": "1.0.0",
+    "date": "2026-05-27",
+    "changes": {
+      "new": [
+        "Routines with per-exercise set and rep targets",
+        "Set logging with auto-fill from your previous workout",
+        "Calendar with weekly muscle-group rollup",
+        "Per-exercise progress charts",
+        "Personal records detected automatically",
+        "Workout history and detail view",
+        "Anonymous cross-device sync — no login required",
+        "Light and dark themes, fully offline"
+      ]
+    }
+  }
+]

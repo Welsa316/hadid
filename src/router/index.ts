@@ -18,6 +18,11 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/ExerciseDetailView.vue'),
   },
   { path: '/settings', name: 'settings', component: () => import('@/views/SettingsView.vue') },
+  {
+    path: '/settings/changelog',
+    name: 'changelog',
+    component: () => import('@/views/ChangelogView.vue'),
+  },
   { path: '/workout', name: 'workout', component: () => import('@/views/WorkoutView.vue') },
   { path: '/:pathMatch(.*)*', name: 'not-found', redirect: '/' },
 ]
