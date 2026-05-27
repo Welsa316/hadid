@@ -1,5 +1,24 @@
 [
   {
+    "version": "1.1.0",
+    "date": "2026-05-27",
+    "changes": {
+      "new": [
+        "Plate calculator with bar and gym profiles",
+        "Rest timer that auto-starts after each set",
+        "Suggested next set, rounded to a weight you can actually load",
+        "Body diagram with weekly muscle volume",
+        "Injury mode with substitute exercise suggestions",
+        "Log past workouts and edit the duration of any finished workout",
+        "Create custom exercises that work with everything",
+        "CSV and JSON data export"
+      ],
+      "improved": [
+        "Auto-fill from your last session is now shown inline above each exercise"
+      ]
+    }
+  },
+  {
     "version": "1.0.0",
     "date": "2026-05-27",
     "changes": {
