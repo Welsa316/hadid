@@ -131,7 +131,8 @@ function back(): void {
       </svg>
 
       <p class="body-note">
-        Tap a muscle to highlight it below. Color intensity scales with your weekly target.
+        Color intensity is how close each muscle is to your weekly target sets
+        (set in Settings). Tap a group to highlight it.
       </p>
 
       <div class="body-stats">
@@ -145,7 +146,7 @@ function back(): void {
         >
           <span class="body-stat__dot" :style="{ backgroundColor: displayGroupColorVar(group) }" aria-hidden="true" />
           <span class="body-stat__label">{{ DISPLAY_GROUP_LABELS[group] }}</span>
-          <span class="body-stat__count">{{ volume[group].sets }} / {{ Math.round(target) }} sets</span>
+          <span class="body-stat__count">{{ volume[group].sets }} of {{ Math.round(target) }} target sets</span>
         </button>
       </div>
     </div>

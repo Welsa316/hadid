@@ -275,6 +275,10 @@ export const useWorkoutsStore = defineStore('workouts', () => {
       console.error('[hadid] failed to add set', cause)
       throw cause
     }
+    // Adding a row signals "I'm moving to the next set" — start the rest timer.
+    if (settingsStore.restAutoStart) {
+      useRestTimerStore().start(settingsStore.defaultRestSeconds)
+    }
   }
 
   async function editSet(updatedSet: WorkoutSet): Promise<void> {
@@ -289,10 +293,6 @@ export const useWorkoutsStore = defineStore('workouts', () => {
       activeSets.value[index] = previous
       console.error('[hadid] failed to update set', cause)
       throw cause
-    }
-    // The user just logged numbers — start the between-sets rest timer.
-    if (settingsStore.restAutoStart) {
-      useRestTimerStore().start(settingsStore.defaultRestSeconds)
     }
   }
 

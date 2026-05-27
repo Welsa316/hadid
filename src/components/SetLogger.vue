@@ -6,6 +6,7 @@ import { getLastWorkoutSetsForExercise } from '@/db/queries'
 import type { WorkoutSet } from '@/db/schema'
 import { useExercisesStore } from '@/stores/exercises'
 import { useGymStore } from '@/stores/gym'
+import { useRestTimerStore } from '@/stores/restTimer'
 import { useRoutinesStore } from '@/stores/routines'
 import { useSettingsStore } from '@/stores/settings'
 import { useWorkoutsStore } from '@/stores/workouts'
@@ -95,6 +96,10 @@ function openCalculator(): void {
   calcOpen.value = true
 }
 
+function startRest(): void {
+  useRestTimerStore().start(settingsStore.defaultRestSeconds)
+}
+
 function removeSet(setId: string): void {
   void workoutsStore.deleteSet(setId)
 }
@@ -174,9 +179,8 @@ function commitField(set: WorkoutSet, field: 'weight' | 'reps', event: Event): v
 
     <div class="set-logger__actions">
       <button type="button" class="set-logger__add" @click="addSet">+ Add set</button>
-      <button type="button" class="set-logger__plates" @click="openCalculator">
-        Calculate plates
-      </button>
+      <button type="button" class="set-logger__rest" @click="startRest">Rest</button>
+      <button type="button" class="set-logger__plates" @click="openCalculator">Plates</button>
     </div>
   </section>
 
@@ -314,12 +318,14 @@ function commitField(set: WorkoutSet, field: 'weight' | 'reps', event: Event): v
 }
 
 .set-logger__add,
+.set-logger__rest,
 .set-logger__plates {
   flex: 1;
   min-height: var(--touch-target-min);
   background-color: transparent;
   border-radius: var(--radius-md);
   color: var(--color-accent);
+  font-size: var(--text-sm);
   font-weight: 600;
 }
 
@@ -327,11 +333,13 @@ function commitField(set: WorkoutSet, field: 'weight' | 'reps', event: Event): v
   border: 1px dashed var(--color-border);
 }
 
+.set-logger__rest,
 .set-logger__plates {
   border: 1px solid var(--color-border);
 }
 
 .set-logger__add:active,
+.set-logger__rest:active,
 .set-logger__plates:active {
   background-color: var(--color-surface-raised);
 }

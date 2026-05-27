@@ -38,8 +38,13 @@ async function saveMachine(): Promise<void> {
 
 <template>
   <ModalSheet title="Plates" @close="emit('close')">
+    <p class="pc-help">
+      Type the total weight you want on the bar. Hadid figures out which plates to put
+      on each side, using the active gym profile's bar and plates.
+    </p>
+
     <label class="pc-field">
-      <span class="pc-field__label">Target ({{ unit }})</span>
+      <span class="pc-field__label">Total weight you want ({{ unit }})</span>
       <input
         v-model.number="target"
         type="number"
@@ -51,7 +56,7 @@ async function saveMachine(): Promise<void> {
     </label>
 
     <label class="pc-field">
-      <span class="pc-field__label">Machine carriage ({{ unit }})</span>
+      <span class="pc-field__label">Empty machine weight ({{ unit }})</span>
       <input
         v-model.number="machineDraft"
         type="number"
@@ -62,7 +67,10 @@ async function saveMachine(): Promise<void> {
         @change="saveMachine"
       />
     </label>
-    <p class="pc-note">Leave at 0 for a regular barbell exercise.</p>
+    <p class="pc-note">
+      0 for a regular barbell. For plate-loaded machines (Hammer Strength, leg press),
+      enter how much the carriage weighs empty.
+    </p>
 
     <div v-if="gym.active === null" class="pc-empty">No gym profile configured.</div>
     <div v-else-if="result === null" class="pc-empty">
@@ -105,6 +113,17 @@ async function saveMachine(): Promise<void> {
 </template>
 
 <style scoped>
+.pc-help {
+  margin-bottom: var(--space-4);
+  padding: var(--space-3);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-dim);
+  font-size: var(--text-sm);
+  line-height: 1.4;
+}
+
 .pc-field {
   display: block;
   margin-bottom: var(--space-3);
