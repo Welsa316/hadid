@@ -145,6 +145,35 @@ async function linkDevice(): Promise<void> {
       </section>
 
       <section class="settings-section">
+        <h2 class="settings-section__title">Rest timer</h2>
+        <div class="settings-segment" role="group" aria-label="Auto-start rest timer">
+          <button
+            v-for="opt in [{ label: 'Auto-start on', value: true }, { label: 'Off', value: false }]"
+            :key="String(opt.value)"
+            type="button"
+            class="settings-segment__option"
+            :class="{ 'settings-segment__option--active': settings.restAutoStart === opt.value }"
+            :aria-pressed="settings.restAutoStart === opt.value"
+            @click="settings.setRestAutoStart(opt.value)"
+          >
+            {{ opt.label }}
+          </button>
+        </div>
+        <label class="settings-rest__field">
+          <span class="settings-rest__label">Default rest (seconds)</span>
+          <input
+            type="number"
+            inputmode="numeric"
+            min="5"
+            step="5"
+            :value="settings.defaultRestSeconds"
+            class="settings-rest__input"
+            @change="(e) => settings.setDefaultRestSeconds(Number((e.target as HTMLInputElement).value))"
+          />
+        </label>
+      </section>
+
+      <section class="settings-section">
         <h2 class="settings-section__title">Gym profile</h2>
         <p v-if="gym.all.length === 0" class="settings-note">Loading…</p>
         <div v-else class="settings-profiles">
@@ -562,5 +591,29 @@ async function linkDevice(): Promise<void> {
   border-radius: var(--radius-md);
   color: var(--color-accent);
   font-weight: 600;
+}
+
+.settings-rest__field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.settings-rest__label {
+  font-size: var(--text-sm);
+  color: var(--color-text-dim);
+}
+
+.settings-rest__input {
+  width: 100px;
+  min-height: var(--touch-target-min);
+  padding: 0 var(--space-3);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  text-align: center;
 }
 </style>

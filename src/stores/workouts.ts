@@ -16,6 +16,7 @@ import {
   updateSet,
   updateWorkout,
 } from '@/db/queries'
+import { useRestTimerStore } from '@/stores/restTimer'
 import { useSettingsStore } from '@/stores/settings'
 import { todayLocalDate } from '@/utils/dates'
 import { workoutVolume } from '@/utils/volume-calc'
@@ -275,6 +276,10 @@ export const useWorkoutsStore = defineStore('workouts', () => {
       activeSets.value[index] = previous
       console.error('[hadid] failed to update set', cause)
       throw cause
+    }
+    // The user just logged numbers — start the between-sets rest timer.
+    if (settingsStore.restAutoStart) {
+      useRestTimerStore().start(settingsStore.defaultRestSeconds)
     }
   }
 

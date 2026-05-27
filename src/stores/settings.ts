@@ -7,6 +7,8 @@ export type Theme = 'dark' | 'light'
 
 const THEME_STORAGE_KEY = 'hadid:theme'
 const UNIT_STORAGE_KEY = 'hadid:unit'
+const REST_AUTO_START_KEY = 'hadid:rest_auto_start'
+const REST_DURATION_KEY = 'hadid:rest_duration'
 const THEME_COLORS: Record<Theme, string> = { dark: '#0f0f10', light: '#f6f6f7' }
 
 function readStoredTheme(): Theme {
@@ -29,6 +31,30 @@ function readStoredUnit(): WeightUnit {
   return 'lb'
 }
 
+function readStoredBoolean(key: string, fallback: boolean): boolean {
+  try {
+    const stored = localStorage.getItem(key)
+    if (stored === '1' || stored === 'true') return true
+    if (stored === '0' || stored === 'false') return false
+  } catch {
+    /* localStorage unavailable */
+  }
+  return fallback
+}
+
+function readStoredPositiveInt(key: string, fallback: number): number {
+  try {
+    const stored = localStorage.getItem(key)
+    if (stored !== null) {
+      const value = Number(stored)
+      if (Number.isFinite(value) && value > 0) return Math.floor(value)
+    }
+  } catch {
+    /* localStorage unavailable */
+  }
+  return fallback
+}
+
 function applyTheme(theme: Theme): void {
   document.documentElement.dataset.theme = theme
   const meta = document.querySelector('meta[name="theme-color"]')
@@ -43,6 +69,8 @@ function applyTheme(theme: Theme): void {
 export const useSettingsStore = defineStore('settings', () => {
   const theme = ref<Theme>(readStoredTheme())
   const unit = ref<WeightUnit>(readStoredUnit())
+  const restAutoStart = ref<boolean>(readStoredBoolean(REST_AUTO_START_KEY, true))
+  const defaultRestSeconds = ref<number>(readStoredPositiveInt(REST_DURATION_KEY, 90))
   applyTheme(theme.value)
 
   function setTheme(next: Theme): void {
@@ -64,5 +92,33 @@ export const useSettingsStore = defineStore('settings', () => {
     }
   }
 
-  return { theme, unit, setTheme, setUnit }
+  function setRestAutoStart(next: boolean): void {
+    restAutoStart.value = next
+    try {
+      localStorage.setItem(REST_AUTO_START_KEY, next ? '1' : '0')
+    } catch {
+      /* localStorage unavailable */
+    }
+  }
+
+  function setDefaultRestSeconds(next: number): void {
+    if (!Number.isFinite(next) || next <= 0) return
+    defaultRestSeconds.value = Math.floor(next)
+    try {
+      localStorage.setItem(REST_DURATION_KEY, String(defaultRestSeconds.value))
+    } catch {
+      /* localStorage unavailable */
+    }
+  }
+
+  return {
+    theme,
+    unit,
+    restAutoStart,
+    defaultRestSeconds,
+    setTheme,
+    setUnit,
+    setRestAutoStart,
+    setDefaultRestSeconds,
+  }
 })

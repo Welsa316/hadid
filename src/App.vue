@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue'
 
 import BottomNav from '@/components/BottomNav.vue'
 import ChangelogModal from '@/components/ChangelogModal.vue'
+import RestTimer from '@/components/RestTimer.vue'
 import { CHANGELOG, compareVersions } from '@/data/changelog'
 import type { ChangelogEntry } from '@/data/changelog'
 import { getMeta, setMeta } from '@/db/queries'
@@ -65,6 +66,7 @@ async function dismissChangelog(): Promise<void> {
 
 <template>
   <RouterView />
+  <RestTimer />
   <BottomNav />
   <ChangelogModal
     v-if="changelogOpen"
