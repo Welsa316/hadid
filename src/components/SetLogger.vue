@@ -9,6 +9,7 @@ import { useGymStore } from '@/stores/gym'
 import { useRoutinesStore } from '@/stores/routines'
 import { useSettingsStore } from '@/stores/settings'
 import { useWorkoutsStore } from '@/stores/workouts'
+import { findSubstitutes, stressedBy } from '@/utils/injury-check'
 import { suggestNextSet } from '@/utils/suggestions'
 
 const props = defineProps<{ exerciseId: string }>()
@@ -71,6 +72,19 @@ const lastSummary = computed(() => {
   return first === undefined ? null : `${first.weight}×${first.reps}`
 })
 
+const stressedInjuries = computed(() => {
+  const exercise = exercisesStore.byId.get(props.exerciseId)
+  if (exercise === undefined) return []
+  return stressedBy(exercise, settingsStore.activeInjuries)
+})
+
+const substitutes = computed(() => {
+  if (stressedInjuries.value.length === 0) return []
+  const exercise = exercisesStore.byId.get(props.exerciseId)
+  if (exercise === undefined) return []
+  return findSubstitutes(exercise, exercisesStore.all, settingsStore.activeInjuries)
+})
+
 const latestWeight = computed(() => sets.value.at(-1)?.weight ?? 0)
 
 function addSet(): void {
@@ -108,6 +122,15 @@ function commitField(set: WorkoutSet, field: 'weight' | 'reps', event: Event): v
         </span>
         <span v-if="suggestion !== null && lastSummary !== null" aria-hidden="true">·</span>
         <span v-if="lastSummary !== null" class="set-logger__last">Last {{ lastSummary }}</span>
+      </p>
+    </div>
+
+    <div v-if="stressedInjuries.length > 0" class="set-logger__warning" role="alert">
+      <p class="set-logger__warning-text">
+        May aggravate your {{ stressedInjuries.join(', ').replace(/_/g, ' ') }}.
+      </p>
+      <p v-if="substitutes.length > 0" class="set-logger__warning-subs">
+        Try instead: {{ substitutes.map((e) => e.name).join(', ') }}.
       </p>
     </div>
 
@@ -199,6 +222,27 @@ function commitField(set: WorkoutSet, field: 'weight' | 'reps', event: Event): v
 
 .set-logger__last {
   color: var(--color-text-faint);
+}
+
+.set-logger__warning {
+  margin-bottom: var(--space-3);
+  padding: var(--space-3);
+  background-color: var(--color-surface-raised);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+}
+
+.set-logger__warning-text {
+  color: var(--color-danger);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.set-logger__warning-subs {
+  margin-top: var(--space-1);
+  color: var(--color-text-dim);
+  font-size: var(--text-xs);
 }
 
 .set-logger__head,

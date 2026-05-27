@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 
 import GymProfileEditor from '@/components/GymProfileEditor.vue'
 import { CHANGELOG } from '@/data/changelog'
+import { INJURIES } from '@/data/injuries'
 import type { GymProfile, WeightUnit } from '@/db/schema'
 import { useGymStore } from '@/stores/gym'
 import { useSettingsStore } from '@/stores/settings'
@@ -171,6 +172,27 @@ async function linkDevice(): Promise<void> {
             @change="(e) => settings.setDefaultRestSeconds(Number((e.target as HTMLInputElement).value))"
           />
         </label>
+      </section>
+
+      <section class="settings-section">
+        <h2 class="settings-section__title">Injury mode</h2>
+        <p class="settings-note">
+          Toggle any current injuries. Exercises that may aggravate them will show a
+          warning and substitute suggestions during a workout.
+        </p>
+        <div class="settings-injuries">
+          <button
+            v-for="injury in INJURIES"
+            :key="injury.id"
+            type="button"
+            class="settings-injury"
+            :class="{ 'settings-injury--active': settings.activeInjuries.includes(injury.id) }"
+            :aria-pressed="settings.activeInjuries.includes(injury.id)"
+            @click="settings.toggleInjury(injury.id)"
+          >
+            {{ injury.label }}
+          </button>
+        </div>
       </section>
 
       <section class="settings-section">
@@ -632,5 +654,29 @@ async function linkDevice(): Promise<void> {
   border-radius: var(--radius-md);
   color: var(--color-text);
   text-align: center;
+}
+
+.settings-injuries {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.settings-injury {
+  min-height: var(--touch-target-min);
+  padding: 0 var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  color: var(--color-text-dim);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.settings-injury--active {
+  background-color: var(--color-danger);
+  border-color: var(--color-danger);
+  color: #fff;
 }
 </style>

@@ -10,6 +10,7 @@ const UNIT_STORAGE_KEY = 'hadid:unit'
 const REST_AUTO_START_KEY = 'hadid:rest_auto_start'
 const REST_DURATION_KEY = 'hadid:rest_duration'
 const WEEKLY_TARGET_KEY = 'hadid:weekly_sets_target'
+const INJURIES_KEY = 'hadid:active_injuries'
 const THEME_COLORS: Record<Theme, string> = { dark: '#0f0f10', light: '#f6f6f7' }
 
 function readStoredTheme(): Theme {
@@ -56,6 +57,18 @@ function readStoredPositiveInt(key: string, fallback: number): number {
   return fallback
 }
 
+function readStoredStringList(key: string): string[] {
+  try {
+    const stored = localStorage.getItem(key)
+    if (stored === null) return []
+    const parsed: unknown = JSON.parse(stored)
+    if (Array.isArray(parsed)) return parsed.filter((x): x is string => typeof x === 'string')
+  } catch {
+    /* localStorage unavailable */
+  }
+  return []
+}
+
 function applyTheme(theme: Theme): void {
   document.documentElement.dataset.theme = theme
   const meta = document.querySelector('meta[name="theme-color"]')
@@ -73,6 +86,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const restAutoStart = ref<boolean>(readStoredBoolean(REST_AUTO_START_KEY, true))
   const defaultRestSeconds = ref<number>(readStoredPositiveInt(REST_DURATION_KEY, 90))
   const weeklySetsTarget = ref<number>(readStoredPositiveInt(WEEKLY_TARGET_KEY, 12))
+  const activeInjuries = ref<string[]>(readStoredStringList(INJURIES_KEY))
   applyTheme(theme.value)
 
   function setTheme(next: Theme): void {
@@ -123,16 +137,29 @@ export const useSettingsStore = defineStore('settings', () => {
     }
   }
 
+  function toggleInjury(id: string): void {
+    activeInjuries.value = activeInjuries.value.includes(id)
+      ? activeInjuries.value.filter((existing) => existing !== id)
+      : [...activeInjuries.value, id]
+    try {
+      localStorage.setItem(INJURIES_KEY, JSON.stringify(activeInjuries.value))
+    } catch {
+      /* localStorage unavailable */
+    }
+  }
+
   return {
     theme,
     unit,
     restAutoStart,
     defaultRestSeconds,
     weeklySetsTarget,
+    activeInjuries,
     setTheme,
     setUnit,
     setRestAutoStart,
     setDefaultRestSeconds,
     setWeeklySetsTarget,
+    toggleInjury,
   }
 })
