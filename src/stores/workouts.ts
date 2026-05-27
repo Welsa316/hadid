@@ -18,7 +18,7 @@ import {
 } from '@/db/queries'
 import { useRestTimerStore } from '@/stores/restTimer'
 import { useSettingsStore } from '@/stores/settings'
-import { todayLocalDate } from '@/utils/dates'
+import { localDateOf } from '@/utils/dates'
 import { workoutVolume } from '@/utils/volume-calc'
 
 const ACTIVE_WORKOUT_KEY = 'active_workout_id'
@@ -76,17 +76,23 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     }
   }
 
-  async function start(routine: Routine | null): Promise<Workout> {
+  async function start(
+    routine: Routine | null,
+    opts: { startedAt?: number; endedAt?: number } = {},
+  ): Promise<Workout> {
     const now = Date.now()
+    const startedAt = opts.startedAt ?? now
+    const endedAt = opts.endedAt ?? null
     const workout: Workout = {
       id: uuidv7(),
       routine_id: routine?.id ?? null,
       status: 'active',
-      started_at: now,
-      ended_at: null,
-      duration_seconds: 0,
+      started_at: startedAt,
+      ended_at: endedAt,
+      duration_seconds:
+        endedAt !== null ? Math.max(0, Math.floor((endedAt - startedAt) / 1000)) : 0,
       notes: '',
-      local_date: todayLocalDate(),
+      local_date: localDateOf(startedAt),
       exercise_ids: routine !== null ? routine.exercises.map((entry) => entry.exercise_id) : [],
       weight_unit: settingsStore.unit,
       total_volume: 0,
@@ -161,11 +167,18 @@ export const useWorkoutsStore = defineStore('workouts', () => {
     }
 
     const now = Date.now()
+    // Past-workout entries (logged retroactively) come in with ended_at and
+    // duration_seconds already set — preserve those instead of stamping "now".
+    const isPastEntry = workout.ended_at !== null
+    const endedAt = isPastEntry ? workout.ended_at : now
+    const duration = isPastEntry
+      ? workout.duration_seconds
+      : Math.floor((now - workout.started_at) / 1000)
     const completed: Workout = {
       ...workout,
       status: 'completed',
-      ended_at: now,
-      duration_seconds: Math.floor((now - workout.started_at) / 1000),
+      ended_at: endedAt,
+      duration_seconds: duration,
       total_volume: workoutVolume(sets),
       set_count: sets.length,
       exercise_count: new Set(sets.map((set) => set.exercise_id)).size,

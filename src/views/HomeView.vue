@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 import BrandLogo from '@/components/BrandLogo.vue'
 import RoutineCard from '@/components/RoutineCard.vue'
+import WorkoutTimeSheet from '@/components/WorkoutTimeSheet.vue'
 import type { Routine } from '@/db/schema'
 import { useRoutinesStore } from '@/stores/routines'
 import { useWorkoutsStore } from '@/stores/workouts'
@@ -14,6 +15,8 @@ const workoutsStore = useWorkoutsStore()
 
 const starting = ref(false)
 const startError = ref<string | null>(null)
+const pastSheetOpen = ref(false)
+const defaultPastStartedAt = computed(() => Date.now() - 60 * 60 * 1000)
 
 async function startWorkout(routine: Routine | null): Promise<void> {
   if (starting.value) return
@@ -21,6 +24,21 @@ async function startWorkout(routine: Routine | null): Promise<void> {
   startError.value = null
   try {
     await workoutsStore.start(routine)
+    await router.push('/workout')
+  } catch {
+    startError.value = 'Could not start the workout. Please try again.'
+  } finally {
+    starting.value = false
+  }
+}
+
+async function startPastWorkout(payload: { startedAt: number; endedAt: number }): Promise<void> {
+  pastSheetOpen.value = false
+  if (starting.value) return
+  starting.value = true
+  startError.value = null
+  try {
+    await workoutsStore.start(null, payload)
     await router.push('/workout')
   } catch {
     startError.value = 'Could not start the workout. Please try again.'
@@ -57,6 +75,15 @@ async function startWorkout(routine: Routine | null): Promise<void> {
           Start Empty Workout
         </button>
 
+        <button
+          type="button"
+          class="past-button"
+          :disabled="starting"
+          @click="pastSheetOpen = true"
+        >
+          Log past workout
+        </button>
+
         <p v-if="startError" class="home-error" role="alert">{{ startError }}</p>
 
         <section class="home-section">
@@ -73,6 +100,15 @@ async function startWorkout(routine: Routine | null): Promise<void> {
         </section>
       </template>
     </div>
+
+    <WorkoutTimeSheet
+      v-if="pastSheetOpen"
+      title="Log past workout"
+      :initial-started-at="defaultPastStartedAt"
+      :initial-duration-seconds="3600"
+      @close="pastSheetOpen = false"
+      @confirm="startPastWorkout"
+    />
   </main>
 </template>
 
@@ -109,7 +145,7 @@ async function startWorkout(routine: Routine | null): Promise<void> {
 .start-button {
   width: 100%;
   min-height: 56px;
-  margin-bottom: var(--space-6);
+  margin-bottom: var(--space-3);
   background-color: var(--color-accent);
   border-radius: var(--radius-lg);
   color: var(--color-on-accent);
@@ -122,6 +158,25 @@ async function startWorkout(routine: Routine | null): Promise<void> {
 }
 
 .start-button:disabled {
+  opacity: 0.6;
+}
+
+.past-button {
+  width: 100%;
+  min-height: var(--touch-target-min);
+  margin-bottom: var(--space-6);
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.past-button:active {
+  background-color: var(--color-surface);
+}
+
+.past-button:disabled {
   opacity: 0.6;
 }
 

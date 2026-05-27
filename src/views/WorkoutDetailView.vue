@@ -3,10 +3,11 @@ import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 import PRBadge from '@/components/PRBadge.vue'
+import WorkoutTimeSheet from '@/components/WorkoutTimeSheet.vue'
 import type { Workout, WorkoutSet } from '@/db/schema'
-import { getSetsByWorkout, getWorkout } from '@/db/queries'
+import { getSetsByWorkout, getWorkout, updateWorkout } from '@/db/queries'
 import { useExercisesStore } from '@/stores/exercises'
-import { formatDuration, formatWorkoutDate } from '@/utils/dates'
+import { formatDuration, formatWorkoutDate, localDateOf } from '@/utils/dates'
 
 const route = useRoute()
 const router = useRouter()
@@ -51,6 +52,27 @@ const exerciseGroups = computed(() => {
 })
 
 const prCount = computed(() => sets.value.filter((set) => set.is_pr).length)
+
+const editTimeOpen = ref(false)
+
+async function saveEditedTime(payload: { startedAt: number; endedAt: number }): Promise<void> {
+  if (workout.value === null) return
+  const next: Workout = {
+    ...workout.value,
+    started_at: payload.startedAt,
+    ended_at: payload.endedAt,
+    duration_seconds: Math.max(0, Math.floor((payload.endedAt - payload.startedAt) / 1000)),
+    local_date: localDateOf(payload.startedAt),
+    updated_at: Date.now(),
+  }
+  try {
+    await updateWorkout(next)
+    workout.value = next
+  } catch (cause: unknown) {
+    console.error('[hadid] failed to update workout time', cause)
+  }
+  editTimeOpen.value = false
+}
 </script>
 
 <template>
@@ -91,6 +113,10 @@ const prCount = computed(() => sets.value.filter((set) => set.is_pr).length)
           </div>
         </div>
 
+        <button type="button" class="detail-edit-time" @click="editTimeOpen = true">
+          Edit time / duration
+        </button>
+
         <p v-if="prCount > 0" class="detail-pr-banner">
           {{ prCount }} new personal {{ prCount === 1 ? 'record' : 'records' }}
         </p>
@@ -111,6 +137,15 @@ const prCount = computed(() => sets.value.filter((set) => set.is_pr).length)
         <p v-if="workout.notes !== ''" class="detail-notes">{{ workout.notes }}</p>
       </template>
     </div>
+
+    <WorkoutTimeSheet
+      v-if="editTimeOpen && workout !== null"
+      title="Edit workout time"
+      :initial-started-at="workout.started_at"
+      :initial-duration-seconds="workout.duration_seconds"
+      @close="editTimeOpen = false"
+      @confirm="saveEditedTime"
+    />
   </main>
 </template>
 
@@ -151,7 +186,22 @@ const prCount = computed(() => sets.value.filter((set) => set.is_pr).length)
 .detail-stats {
   display: flex;
   gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.detail-edit-time {
+  width: 100%;
+  min-height: var(--touch-target-min);
   margin-bottom: var(--space-5);
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.detail-edit-time:active {
+  background-color: var(--color-surface);
 }
 
 .detail-stat {
