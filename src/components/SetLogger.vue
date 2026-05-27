@@ -5,7 +5,11 @@ import PlateCalculator from '@/components/PlateCalculator.vue'
 import { getLastWorkoutSetsForExercise } from '@/db/queries'
 import type { WorkoutSet } from '@/db/schema'
 import { useExercisesStore } from '@/stores/exercises'
+import { useGymStore } from '@/stores/gym'
+import { useRoutinesStore } from '@/stores/routines'
+import { useSettingsStore } from '@/stores/settings'
 import { useWorkoutsStore } from '@/stores/workouts'
+import { suggestNextSet } from '@/utils/suggestions'
 
 const props = defineProps<{ exerciseId: string }>()
 
@@ -13,6 +17,9 @@ const calcOpen = ref(false)
 
 const workoutsStore = useWorkoutsStore()
 const exercisesStore = useExercisesStore()
+const routinesStore = useRoutinesStore()
+const gymStore = useGymStore()
+const settingsStore = useSettingsStore()
 
 const exerciseName = computed(
   () => exercisesStore.byId.get(props.exerciseId)?.name ?? 'Unknown exercise',
@@ -36,9 +43,33 @@ onMounted(async () => {
   }
 })
 
-const lastTimeLabel = computed(() =>
-  lastTimeSets.value.map((set) => `${set.weight}×${set.reps}`).join('  ·  '),
-)
+const targetReps = computed<number>(() => {
+  const workout = workoutsStore.active
+  if (workout?.routine_id === null || workout?.routine_id === undefined) {
+    return lastTimeSets.value[0]?.reps ?? 0
+  }
+  const routine = routinesStore.all.find((r) => r.id === workout.routine_id)
+  const entry = routine?.exercises.find((e) => e.exercise_id === props.exerciseId)
+  return entry?.target_reps ?? lastTimeSets.value[0]?.reps ?? 0
+})
+
+const suggestion = computed(() => {
+  const exercise = exercisesStore.byId.get(props.exerciseId)
+  if (exercise === undefined) return null
+  const unit = gymStore.active?.unit ?? settingsStore.unit
+  return suggestNextSet(
+    lastTimeSets.value,
+    targetReps.value,
+    exercise.type,
+    unit,
+    gymStore.active,
+  )
+})
+
+const lastSummary = computed(() => {
+  const first = lastTimeSets.value[0]
+  return first === undefined ? null : `${first.weight}×${first.reps}`
+})
 
 const latestWeight = computed(() => sets.value.at(-1)?.weight ?? 0)
 
@@ -71,7 +102,13 @@ function commitField(set: WorkoutSet, field: 'weight' | 'reps', event: Event): v
   <section class="set-logger">
     <div class="set-logger__header">
       <h3 class="set-logger__name">{{ exerciseName }}</h3>
-      <p v-if="lastTimeLabel !== ''" class="set-logger__last">Last time: {{ lastTimeLabel }}</p>
+      <p v-if="suggestion !== null || lastSummary !== null" class="set-logger__hint">
+        <span v-if="suggestion !== null" class="set-logger__suggested">
+          Suggested {{ suggestion.weight }}×{{ suggestion.reps }}
+        </span>
+        <span v-if="suggestion !== null && lastSummary !== null" aria-hidden="true">·</span>
+        <span v-if="lastSummary !== null" class="set-logger__last">Last {{ lastSummary }}</span>
+      </p>
     </div>
 
     <div v-if="sets.length > 0" class="set-logger__table">
@@ -146,9 +183,21 @@ function commitField(set: WorkoutSet, field: 'weight' | 'reps', event: Event): v
   font-weight: 700;
 }
 
-.set-logger__last {
+.set-logger__hint {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
   margin-top: 2px;
   font-size: var(--text-xs);
+  color: var(--color-text-faint);
+}
+
+.set-logger__suggested {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.set-logger__last {
   color: var(--color-text-faint);
 }
 
