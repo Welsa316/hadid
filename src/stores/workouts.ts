@@ -94,6 +94,13 @@ export const useWorkoutsStore = defineStore('workouts', () => {
       notes: '',
       local_date: localDateOf(startedAt),
       exercise_ids: routine !== null ? routine.exercises.map((entry) => entry.exercise_id) : [],
+      exercise_groups:
+        routine === null
+          ? {}
+          : routine.exercises.reduce<Record<string, string>>((acc, entry) => {
+              if (entry.group_id !== undefined) acc[entry.exercise_id] = entry.group_id
+              return acc
+            }, {}),
       weight_unit: settingsStore.unit,
       total_volume: 0,
       set_count: 0,

@@ -90,6 +90,8 @@ export interface RoutineExercise {
   exercise_id: string
   target_sets: number
   target_reps: number
+  /** When set, exercises sharing this id are a superset block in the routine. */
+  group_id?: string
 }
 
 export interface Routine extends SyncedRecord {
@@ -115,6 +117,10 @@ export interface Workout extends SyncedRecord {
    *  built up as exercises are added. Distinct from logged sets: an exercise
    *  can be in the lineup with zero sets (skipped). */
   exercise_ids: string[]
+  /** Snapshot of which lineup exercises are part of which superset group.
+   *  Captured at workout start so later edits to the routine don't reshape
+   *  the workout's grouping. */
+  exercise_groups?: Record<string, string>
   /** Weight unit every set in this workout is logged in (captured at start). */
   weight_unit: WeightUnit
   /** Summary fields, computed once when the workout is completed (0 while

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { v7 as uuidv7 } from 'uuid'
 
 import ExercisePicker from './ExercisePicker.vue'
 import ModalSheet from './ModalSheet.vue'
@@ -79,6 +80,40 @@ function onPickerConfirm(ids: string[]): void {
     ...ids.map((id) => ({ exercise_id: id, target_sets: 3, target_reps: 10 })),
   ]
   pickerOpen.value = false
+}
+
+function clearGroup(index: number): void {
+  const current = exercises.value[index]
+  if (current === undefined) return
+  exercises.value[index] = {
+    exercise_id: current.exercise_id,
+    target_sets: current.target_sets,
+    target_reps: current.target_reps,
+  }
+}
+
+/** Pairs (or un-pairs) this exercise with the one above it as a superset. */
+function toggleSuperset(index: number): void {
+  if (index === 0) return
+  const current = exercises.value[index]
+  const previous = exercises.value[index - 1]
+  if (current === undefined || previous === undefined) return
+
+  if (current.group_id !== undefined) {
+    const groupId = current.group_id
+    clearGroup(index)
+    const stillUsed = exercises.value.some(
+      (entry, i) => i !== index && entry.group_id === groupId,
+    )
+    if (!stillUsed) clearGroup(index - 1)
+    return
+  }
+
+  const groupId = previous.group_id ?? uuidv7()
+  if (previous.group_id === undefined) {
+    updateExercise(index - 1, { group_id: groupId })
+  }
+  updateExercise(index, { group_id: groupId })
 }
 
 async function handleSave(): Promise<void> {
@@ -208,6 +243,14 @@ async function handleDelete(): Promise<void> {
                 />
               </label>
             </div>
+            <label v-if="index > 0" class="editor-scheme__superset">
+              <input
+                type="checkbox"
+                :checked="row.group_id !== undefined"
+                @change="toggleSuperset(index)"
+              />
+              <span>Superset with previous exercise</span>
+            </label>
           </div>
         </li>
       </ul>
@@ -425,6 +468,22 @@ async function handleDelete(): Promise<void> {
   border-radius: var(--radius-sm);
   color: var(--color-text);
   font-weight: 600;
+}
+
+.editor-scheme__superset {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+  color: var(--color-text-dim);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.editor-scheme__superset input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-accent);
 }
 
 .editor-empty {

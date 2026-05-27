@@ -32,6 +32,23 @@ onUnmounted(() => {
 
 const exerciseIds = computed(() => workoutsStore.active?.exercise_ids ?? [])
 
+/** Each exercise with whether it starts a new superset block. */
+const lineupWithGroups = computed(() => {
+  const groups = workoutsStore.active?.exercise_groups ?? {}
+  const result: Array<{ id: string; startsGroup: boolean; inGroup: boolean }> = []
+  let previousGroup: string | undefined
+  for (const id of exerciseIds.value) {
+    const current = groups[id]
+    result.push({
+      id,
+      inGroup: current !== undefined,
+      startsGroup: current !== undefined && current !== previousGroup,
+    })
+    previousGroup = current
+  }
+  return result
+})
+
 function onPickerConfirm(ids: string[]): void {
   void workoutsStore.addExercises(ids)
   pickerOpen.value = false
@@ -70,11 +87,10 @@ async function discardWorkout(): Promise<void> {
       <div class="page__body">
         <p v-if="actionError" class="workout-error" role="alert">{{ actionError }}</p>
 
-        <SetLogger
-          v-for="(id, index) in exerciseIds"
-          :key="`${id}-${index}`"
-          :exercise-id="id"
-        />
+        <template v-for="(entry, index) in lineupWithGroups" :key="`${entry.id}-${index}`">
+          <p v-if="entry.startsGroup" class="workout-superset">SUPERSET</p>
+          <SetLogger :exercise-id="entry.id" :class="{ 'workout-superset__logger': entry.inGroup }" />
+        </template>
 
         <p v-if="exerciseIds.length === 0" class="workout-hint">
           No exercises yet. Add some to start logging sets.
@@ -151,6 +167,24 @@ async function discardWorkout(): Promise<void> {
   border-radius: var(--radius-md);
   color: var(--color-accent);
   font-weight: 700;
+}
+
+.workout-superset {
+  display: inline-block;
+  margin-top: var(--space-3);
+  margin-bottom: calc(-1 * var(--space-2));
+  padding: 2px var(--space-3);
+  background-color: var(--color-accent);
+  border-radius: var(--radius-full);
+  color: var(--color-on-accent);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.workout-superset__logger {
+  border-color: var(--color-accent);
 }
 
 .workout-add:active {
