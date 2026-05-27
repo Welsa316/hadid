@@ -126,6 +126,10 @@ function onTouchEnd(event: TouchEvent): void {
       <p v-else-if="loading" class="cal__state">Loading calendar…</p>
 
       <template v-else>
+        <RouterLink to="/body" class="cal__body-link">
+          <span>Body volume diagram</span>
+          <span aria-hidden="true">→</span>
+        </RouterLink>
         <WeeklySummary :day-by-date="dayByDate" @select="selectDay" />
 
         <div class="cal__divider"></div>
@@ -198,6 +202,23 @@ function onTouchEnd(event: TouchEvent): void {
   color: var(--color-text-faint);
   font-size: var(--text-sm);
   text-align: center;
+}
+
+.cal__body-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.cal__body-link span:last-child {
+  color: var(--color-accent);
 }
 
 .cal__divider {

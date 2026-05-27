@@ -174,6 +174,23 @@ async function linkDevice(): Promise<void> {
       </section>
 
       <section class="settings-section">
+        <h2 class="settings-section__title">Weekly volume target</h2>
+        <label class="settings-rest__field">
+          <span class="settings-rest__label">Sets per muscle per week</span>
+          <input
+            type="number"
+            inputmode="numeric"
+            min="1"
+            step="1"
+            :value="settings.weeklySetsTarget"
+            class="settings-rest__input"
+            @change="(e) => settings.setWeeklySetsTarget(Number((e.target as HTMLInputElement).value))"
+          />
+        </label>
+        <p class="settings-note">Used by the body diagram to color muscle volume.</p>
+      </section>
+
+      <section class="settings-section">
         <h2 class="settings-section__title">Gym profile</h2>
         <p v-if="gym.all.length === 0" class="settings-note">Loading…</p>
         <div v-else class="settings-profiles">

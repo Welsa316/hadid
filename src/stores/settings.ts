@@ -9,6 +9,7 @@ const THEME_STORAGE_KEY = 'hadid:theme'
 const UNIT_STORAGE_KEY = 'hadid:unit'
 const REST_AUTO_START_KEY = 'hadid:rest_auto_start'
 const REST_DURATION_KEY = 'hadid:rest_duration'
+const WEEKLY_TARGET_KEY = 'hadid:weekly_sets_target'
 const THEME_COLORS: Record<Theme, string> = { dark: '#0f0f10', light: '#f6f6f7' }
 
 function readStoredTheme(): Theme {
@@ -71,6 +72,7 @@ export const useSettingsStore = defineStore('settings', () => {
   const unit = ref<WeightUnit>(readStoredUnit())
   const restAutoStart = ref<boolean>(readStoredBoolean(REST_AUTO_START_KEY, true))
   const defaultRestSeconds = ref<number>(readStoredPositiveInt(REST_DURATION_KEY, 90))
+  const weeklySetsTarget = ref<number>(readStoredPositiveInt(WEEKLY_TARGET_KEY, 12))
   applyTheme(theme.value)
 
   function setTheme(next: Theme): void {
@@ -111,14 +113,26 @@ export const useSettingsStore = defineStore('settings', () => {
     }
   }
 
+  function setWeeklySetsTarget(next: number): void {
+    if (!Number.isFinite(next) || next <= 0) return
+    weeklySetsTarget.value = Math.floor(next)
+    try {
+      localStorage.setItem(WEEKLY_TARGET_KEY, String(weeklySetsTarget.value))
+    } catch {
+      /* localStorage unavailable */
+    }
+  }
+
   return {
     theme,
     unit,
     restAutoStart,
     defaultRestSeconds,
+    weeklySetsTarget,
     setTheme,
     setUnit,
     setRestAutoStart,
     setDefaultRestSeconds,
+    setWeeklySetsTarget,
   }
 })
