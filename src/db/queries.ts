@@ -6,6 +6,7 @@ import type {
   Equipment,
   Exercise,
   ExerciseType,
+  GymProfile,
   HadidDB,
   MuscleGroup,
   OutboxEntity,
@@ -300,6 +301,24 @@ export async function detectWorkoutPrs(
       if (!set.is_pr) await updateSet({ ...set, is_pr: true, updated_at: now })
     }
   }
+}
+
+/* --- gym profiles (device-local) -------------------------------------- *
+ * Gym profiles aren't synced — equipment is a per-device thing. They keep
+ * the `SyncedRecord` shape so the store can be added to sync later without
+ * a migration.                                                             */
+
+export async function getAllGymProfiles(): Promise<GymProfile[]> {
+  const db = await getDB()
+  const all = await db.getAll('gym_profiles')
+  return all
+    .filter((profile) => profile.deleted_at === null)
+    .sort((a, b) => a.name.localeCompare(b.name))
+}
+
+export async function putGymProfile(profile: GymProfile): Promise<void> {
+  const db = await getDB()
+  await db.put('gym_profiles', toPlain(profile))
 }
 
 /* --- sync support ----------------------------------------------------- *

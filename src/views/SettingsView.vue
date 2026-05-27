@@ -2,8 +2,10 @@
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+import GymProfileEditor from '@/components/GymProfileEditor.vue'
 import { CHANGELOG } from '@/data/changelog'
-import type { WeightUnit } from '@/db/schema'
+import type { GymProfile, WeightUnit } from '@/db/schema'
+import { useGymStore } from '@/stores/gym'
 import { useSettingsStore } from '@/stores/settings'
 import type { Theme } from '@/stores/settings'
 import { useSyncStore } from '@/stores/sync'
@@ -11,8 +13,31 @@ import { useSyncStore } from '@/stores/sync'
 const router = useRouter()
 const settings = useSettingsStore()
 const sync = useSyncStore()
+const gym = useGymStore()
 
 const currentVersion = CHANGELOG[0]?.version ?? ''
+
+const editingProfile = ref<GymProfile | null>(null)
+
+function openProfileEditor(profile: GymProfile): void {
+  editingProfile.value = profile
+}
+
+function startNewProfile(): void {
+  editingProfile.value = gym.newProfile('New gym')
+}
+
+async function saveProfile(profile: GymProfile): Promise<void> {
+  await gym.save(profile)
+  if (gym.activeId === null) await gym.setActive(profile.id)
+  editingProfile.value = null
+}
+
+async function deleteProfile(): Promise<void> {
+  if (editingProfile.value === null) return
+  await gym.remove(editingProfile.value.id)
+  editingProfile.value = null
+}
 
 const themeOptions: ReadonlyArray<{ value: Theme; label: string }> = [
   { value: 'dark', label: 'Dark' },
@@ -119,6 +144,35 @@ async function linkDevice(): Promise<void> {
         </p>
       </section>
 
+      <section class="settings-section">
+        <h2 class="settings-section__title">Gym profile</h2>
+        <p v-if="gym.all.length === 0" class="settings-note">Loading…</p>
+        <div v-else class="settings-profiles">
+          <div v-for="profile in gym.all" :key="profile.id" class="settings-profile">
+            <button
+              type="button"
+              class="settings-profile__select"
+              :class="{ 'settings-profile__select--active': profile.id === gym.activeId }"
+              @click="gym.setActive(profile.id)"
+            >
+              <span class="settings-profile__name">{{ profile.name }}</span>
+              <span class="settings-profile__meta">
+                {{ profile.bar_weight }} {{ profile.unit }} bar · {{ profile.plates.length }} plate sizes
+              </span>
+            </button>
+            <button
+              type="button"
+              class="settings-profile__edit"
+              :aria-label="`Edit ${profile.name}`"
+              @click="openProfileEditor(profile)"
+            >Edit</button>
+          </div>
+        </div>
+        <button type="button" class="settings-profile-new" @click="startNewProfile">
+          + New profile
+        </button>
+      </section>
+
       <section v-if="sync.status !== 'disabled'" class="settings-section">
         <h2 class="settings-section__title">Sync</h2>
         <div class="settings-sync">
@@ -210,6 +264,15 @@ async function linkDevice(): Promise<void> {
         </div>
       </section>
     </div>
+
+    <GymProfileEditor
+      v-if="editingProfile !== null"
+      :profile="editingProfile"
+      :can-delete="gym.all.length > 1"
+      @save="saveProfile"
+      @delete="deleteProfile"
+      @close="editingProfile = null"
+    />
   </main>
 </template>
 
@@ -439,5 +502,65 @@ async function linkDevice(): Promise<void> {
   flex-shrink: 0;
   color: var(--color-accent);
   font-size: var(--text-base);
+}
+
+.settings-profiles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.settings-profile {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-2);
+}
+
+.settings-profile__select {
+  flex: 1;
+  min-width: 0;
+  padding: var(--space-3);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  text-align: left;
+}
+
+.settings-profile__select--active {
+  border-color: var(--color-accent);
+}
+
+.settings-profile__name {
+  display: block;
+  font-weight: 700;
+}
+
+.settings-profile__meta {
+  display: block;
+  margin-top: 2px;
+  color: var(--color-text-dim);
+  font-size: var(--text-sm);
+}
+
+.settings-profile__edit {
+  flex-shrink: 0;
+  padding: 0 var(--space-3);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.settings-profile-new {
+  width: 100%;
+  min-height: var(--touch-target-min);
+  margin-top: var(--space-3);
+  background-color: transparent;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-accent);
+  font-weight: 600;
 }
 </style>

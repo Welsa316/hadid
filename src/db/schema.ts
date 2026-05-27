@@ -2,7 +2,7 @@ import { openDB } from 'idb'
 import type { DBSchema, IDBPDatabase } from 'idb'
 
 export const DB_NAME = 'hadid'
-export const DB_VERSION = 1
+export const DB_VERSION = 2
 
 /* ------------------------------------------------------------------ *
  * Domain enums
@@ -169,6 +169,28 @@ export interface MetaEntry {
   value: unknown
 }
 
+/** One weight-plate stack in a gym profile. `count` is total plates owned. */
+export interface PlateStack {
+  weight: number
+  count: number
+}
+
+/**
+ * A gym setup the user can swap between (home rack vs. commercial gym vs.
+ * travel). Device-local for now — not synced — so each device keeps its own
+ * equipment layout. The schema carries `SyncedRecord` fields so the store
+ * can be added to sync later without a rewrite.
+ */
+export interface GymProfile extends SyncedRecord {
+  name: string
+  unit: WeightUnit
+  /** Empty bar weight in the profile's unit. */
+  bar_weight: number
+  plates: PlateStack[]
+  /** Per-exercise machine carriage weight — used for plate calculation. */
+  machine_weights: Record<string, number>
+}
+
 /* ------------------------------------------------------------------ *
  * IndexedDB schema
  * ------------------------------------------------------------------ */
@@ -228,6 +250,13 @@ export interface HadidDB extends DBSchema {
     key: string
     value: MetaEntry
   }
+  gym_profiles: {
+    key: string
+    value: GymProfile
+    indexes: {
+      by_updated_at: number
+    }
+  }
 }
 
 export type HadidDatabase = IDBPDatabase<HadidDB>
@@ -244,32 +273,38 @@ let dbPromise: Promise<HadidDatabase> | null = null
 export function getDB(): Promise<HadidDatabase> {
   if (dbPromise === null) {
     dbPromise = openDB<HadidDB>(DB_NAME, DB_VERSION, {
-      upgrade(db) {
-        const exercises = db.createObjectStore('exercises', { keyPath: 'id' })
-        exercises.createIndex('by_primary_muscle', 'primary_muscle')
-        exercises.createIndex('by_type', 'type')
+      upgrade(db, oldVersion) {
+        if (oldVersion < 1) {
+          const exercises = db.createObjectStore('exercises', { keyPath: 'id' })
+          exercises.createIndex('by_primary_muscle', 'primary_muscle')
+          exercises.createIndex('by_type', 'type')
 
-        const routines = db.createObjectStore('routines', { keyPath: 'id' })
-        routines.createIndex('by_updated_at', 'updated_at')
+          const routines = db.createObjectStore('routines', { keyPath: 'id' })
+          routines.createIndex('by_updated_at', 'updated_at')
 
-        const workouts = db.createObjectStore('workouts', { keyPath: 'id' })
-        workouts.createIndex('by_started_at', 'started_at')
-        workouts.createIndex('by_status', 'status')
-        workouts.createIndex('by_local_date', 'local_date')
+          const workouts = db.createObjectStore('workouts', { keyPath: 'id' })
+          workouts.createIndex('by_started_at', 'started_at')
+          workouts.createIndex('by_status', 'status')
+          workouts.createIndex('by_local_date', 'local_date')
 
-        const sets = db.createObjectStore('sets', { keyPath: 'id' })
-        sets.createIndex('by_workout_id', 'workout_id')
-        sets.createIndex('by_exercise_id', 'exercise_id')
-        sets.createIndex('by_exercise_completed', ['exercise_id', 'completed_at'])
+          const sets = db.createObjectStore('sets', { keyPath: 'id' })
+          sets.createIndex('by_workout_id', 'workout_id')
+          sets.createIndex('by_exercise_id', 'exercise_id')
+          sets.createIndex('by_exercise_completed', ['exercise_id', 'completed_at'])
 
-        const prs = db.createObjectStore('prs', { keyPath: 'id' })
-        prs.createIndex('by_exercise_id', 'exercise_id')
-        prs.createIndex('by_exercise_type', ['exercise_id', 'type'])
+          const prs = db.createObjectStore('prs', { keyPath: 'id' })
+          prs.createIndex('by_exercise_id', 'exercise_id')
+          prs.createIndex('by_exercise_type', ['exercise_id', 'type'])
 
-        const outbox = db.createObjectStore('outbox', { keyPath: 'id' })
-        outbox.createIndex('by_created_at', 'created_at')
+          const outbox = db.createObjectStore('outbox', { keyPath: 'id' })
+          outbox.createIndex('by_created_at', 'created_at')
 
-        db.createObjectStore('meta', { keyPath: 'key' })
+          db.createObjectStore('meta', { keyPath: 'key' })
+        }
+        if (oldVersion < 2) {
+          const gymProfiles = db.createObjectStore('gym_profiles', { keyPath: 'id' })
+          gymProfiles.createIndex('by_updated_at', 'updated_at')
+        }
       },
       blocked() {
         console.warn('[hadid] IndexedDB open is blocked by another connection')

@@ -7,6 +7,7 @@ import { CHANGELOG, compareVersions } from '@/data/changelog'
 import type { ChangelogEntry } from '@/data/changelog'
 import { getMeta, setMeta } from '@/db/queries'
 import { useExercisesStore } from '@/stores/exercises'
+import { useGymStore } from '@/stores/gym'
 import { useRoutinesStore } from '@/stores/routines'
 import { useSyncStore } from '@/stores/sync'
 import { useWorkoutsStore } from '@/stores/workouts'
@@ -22,6 +23,7 @@ const changelogOpen = ref(false)
 void useExercisesStore().hydrate()
 void useRoutinesStore().hydrate()
 void useWorkoutsStore().hydrate()
+void useGymStore().hydrate()
 
 // Start background sync. A no-op when no backend is configured
 // (VITE_SYNC_URL unset) — the app stays fully offline-only.

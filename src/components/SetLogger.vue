@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 
+import PlateCalculator from '@/components/PlateCalculator.vue'
 import { getLastWorkoutSetsForExercise } from '@/db/queries'
 import type { WorkoutSet } from '@/db/schema'
 import { useExercisesStore } from '@/stores/exercises'
 import { useWorkoutsStore } from '@/stores/workouts'
 
 const props = defineProps<{ exerciseId: string }>()
+
+const calcOpen = ref(false)
 
 const workoutsStore = useWorkoutsStore()
 const exercisesStore = useExercisesStore()
@@ -37,8 +40,14 @@ const lastTimeLabel = computed(() =>
   lastTimeSets.value.map((set) => `${set.weight}×${set.reps}`).join('  ·  '),
 )
 
+const latestWeight = computed(() => sets.value.at(-1)?.weight ?? 0)
+
 function addSet(): void {
   void workoutsStore.addSet(props.exerciseId)
+}
+
+function openCalculator(): void {
+  calcOpen.value = true
 }
 
 function removeSet(setId: string): void {
@@ -103,8 +112,20 @@ function commitField(set: WorkoutSet, field: 'weight' | 'reps', event: Event): v
       </div>
     </div>
 
-    <button type="button" class="set-logger__add" @click="addSet">+ Add set</button>
+    <div class="set-logger__actions">
+      <button type="button" class="set-logger__add" @click="addSet">+ Add set</button>
+      <button type="button" class="set-logger__plates" @click="openCalculator">
+        Calculate plates
+      </button>
+    </div>
   </section>
+
+  <PlateCalculator
+    v-if="calcOpen"
+    :exercise-id="exerciseId"
+    :initial-weight="latestWeight"
+    @close="calcOpen = false"
+  />
 </template>
 
 <style scoped>
@@ -194,17 +215,31 @@ function commitField(set: WorkoutSet, field: 'weight' | 'reps', event: Event): v
   stroke-linecap: round;
 }
 
-.set-logger__add {
-  width: 100%;
+.set-logger__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.set-logger__add,
+.set-logger__plates {
+  flex: 1;
   min-height: var(--touch-target-min);
   background-color: transparent;
-  border: 1px dashed var(--color-border);
   border-radius: var(--radius-md);
   color: var(--color-accent);
   font-weight: 600;
 }
 
-.set-logger__add:active {
+.set-logger__add {
+  border: 1px dashed var(--color-border);
+}
+
+.set-logger__plates {
+  border: 1px solid var(--color-border);
+}
+
+.set-logger__add:active,
+.set-logger__plates:active {
   background-color: var(--color-surface-raised);
 }
 </style>
