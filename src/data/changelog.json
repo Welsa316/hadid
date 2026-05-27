@@ -1,5 +1,20 @@
 [
   {
+    "version": "1.2.0",
+    "date": "2026-05-27",
+    "changes": {
+      "new": [
+        "Supersets — pair exercises in a routine and see them grouped in your workout",
+        "Rest button on each exercise so you can start the timer manually"
+      ],
+      "improved": [
+        "Rest timer now auto-starts only when you tap + Add set (was firing on every edit)",
+        "Plate calculator wording — Total weight + Empty machine weight, with help text explaining each",
+        "Body diagram cards say \"6 of 12 target sets\" instead of a bare \"6 / 12\""
+      ]
+    }
+  },
+  {
     "version": "1.1.0",
     "date": "2026-05-27",
     "changes": {
