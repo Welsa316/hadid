@@ -6,6 +6,7 @@ import GymProfileEditor from '@/components/GymProfileEditor.vue'
 import { CHANGELOG } from '@/data/changelog'
 import { INJURIES } from '@/data/injuries'
 import type { GymProfile, WeightUnit } from '@/db/schema'
+import { exportAsCsv, exportAsJson } from '@/utils/export'
 import { useGymStore } from '@/stores/gym'
 import { useSettingsStore } from '@/stores/settings'
 import type { Theme } from '@/stores/settings'
@@ -38,6 +39,21 @@ async function deleteProfile(): Promise<void> {
   if (editingProfile.value === null) return
   await gym.remove(editingProfile.value.id)
   editingProfile.value = null
+}
+
+const exporting = ref(false)
+
+async function runExport(kind: 'csv' | 'json'): Promise<void> {
+  if (exporting.value) return
+  exporting.value = true
+  try {
+    if (kind === 'csv') await exportAsCsv()
+    else await exportAsJson()
+  } catch (cause: unknown) {
+    console.error('[hadid] export failed', cause)
+  } finally {
+    exporting.value = false
+  }
 }
 
 const themeOptions: ReadonlyArray<{ value: Theme; label: string }> = [
@@ -308,6 +324,21 @@ async function linkDevice(): Promise<void> {
           <p class="settings-install__step">
             <strong>Android:</strong> open the browser menu, then Install app.
           </p>
+        </div>
+      </section>
+
+      <section class="settings-section">
+        <h2 class="settings-section__title">Export</h2>
+        <p class="settings-note">
+          Save every workout, set, routine, and PR to a file you can keep or move to another app.
+        </p>
+        <div class="settings-export">
+          <button type="button" class="settings-export__btn" :disabled="exporting" @click="runExport('csv')">
+            CSV (sets only)
+          </button>
+          <button type="button" class="settings-export__btn" :disabled="exporting" @click="runExport('json')">
+            JSON (full data)
+          </button>
         </div>
       </section>
 
@@ -678,5 +709,29 @@ async function linkDevice(): Promise<void> {
   background-color: var(--color-danger);
   border-color: var(--color-danger);
   color: #fff;
+}
+
+.settings-export {
+  display: flex;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.settings-export__btn {
+  flex: 1;
+  min-height: var(--touch-target-min);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.settings-export__btn:active {
+  background-color: var(--color-surface-raised);
+}
+
+.settings-export__btn:disabled {
+  opacity: 0.5;
 }
 </style>

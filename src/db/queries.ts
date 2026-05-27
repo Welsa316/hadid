@@ -191,6 +191,20 @@ export async function getCompletedWorkouts(): Promise<Workout[]> {
     .sort((a, b) => b.started_at - a.started_at)
 }
 
+/** Every non-deleted workout. Used by data export. */
+export async function getAllWorkouts(): Promise<Workout[]> {
+  const db = await getDB()
+  const all = await db.getAll('workouts')
+  return all.filter((workout) => workout.deleted_at === null)
+}
+
+/** Every non-deleted personal record. Used by data export. */
+export async function getAllPrs(): Promise<PersonalRecord[]> {
+  const db = await getDB()
+  const all = await db.getAll('prs')
+  return all.filter((pr) => pr.deleted_at === null)
+}
+
 /* --- sets -------------------------------------------------------------- */
 
 /** All non-deleted sets belonging to a workout. */
