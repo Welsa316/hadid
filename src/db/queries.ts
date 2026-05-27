@@ -84,14 +84,29 @@ export async function getAllExercises(): Promise<Exercise[]> {
   return all.filter((exercise) => exercise.deleted_at === null)
 }
 
+/** Persists a user-created exercise. Custom exercises sync; seeded ones don't. */
+export async function createCustomExercise(exercise: Exercise): Promise<void> {
+  await persistMutation('exercises', exercise, 'create')
+}
+
+export async function updateCustomExercise(exercise: Exercise): Promise<void> {
+  await persistMutation('exercises', exercise, 'update')
+}
+
+/** Persists a soft-deleted custom exercise (caller sets `deleted_at`). */
+export async function removeCustomExercise(exercise: Exercise): Promise<void> {
+  await persistMutation('exercises', exercise, 'delete')
+}
+
 /* --- write-through mutations ------------------------------------------ *
  * Every user mutation writes the record and an outbox entry in a single
  * transaction. The outbox is the ordered change log a future cloud-sync
  * layer will replay; pairing the two writes keeps them consistent.        */
 
-type SyncStoreName = 'routines' | 'workouts' | 'sets' | 'prs'
+type SyncStoreName = 'exercises' | 'routines' | 'workouts' | 'sets' | 'prs'
 
 const OUTBOX_ENTITY_BY_STORE: Record<SyncStoreName, OutboxEntity> = {
+  exercises: 'exercise',
   routines: 'routine',
   workouts: 'workout',
   sets: 'set',
@@ -364,6 +379,8 @@ export async function applyRemoteRecord(
   record: SyncedRecord,
 ): Promise<boolean> {
   switch (entity) {
+    case 'exercise':
+      return putIfNewer('exercises', record as Exercise)
     case 'routine':
       return putIfNewer('routines', record as Routine)
     case 'workout':

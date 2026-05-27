@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 
+import ExerciseEditor from './ExerciseEditor.vue'
 import ModalSheet from './ModalSheet.vue'
 import type { Exercise } from '@/db/schema'
 import { useExercisesStore } from '@/stores/exercises'
@@ -17,6 +18,18 @@ const emit = defineEmits<{ close: []; confirm: [ids: string[]] }>()
 const exercisesStore = useExercisesStore()
 const search = ref('')
 const selectedIds = ref<Set<string>>(new Set())
+const newExerciseOpen = ref(false)
+
+async function saveNewExercise(exercise: Exercise): Promise<void> {
+  try {
+    await exercisesStore.addCustom(exercise)
+    // Auto-select the newly-added exercise so the user can confirm immediately.
+    selectedIds.value = new Set([...selectedIds.value, exercise.id])
+  } catch (cause: unknown) {
+    console.error('[hadid] failed to add custom exercise', cause)
+  }
+  newExerciseOpen.value = false
+}
 
 const available = computed(() => {
   const excluded = new Set(props.excludeIds)
@@ -66,6 +79,10 @@ function confirmSelection(): void {
       aria-label="Search exercises"
     />
 
+    <button type="button" class="picker-new" @click="newExerciseOpen = true">
+      + New exercise
+    </button>
+
     <ul v-if="available.length > 0" class="picker-list">
       <li v-for="exercise in available" :key="exercise.id">
         <button
@@ -81,7 +98,10 @@ function confirmSelection(): void {
             aria-hidden="true"
           />
           <span class="picker-row__text">
-            <span class="picker-row__name">{{ exercise.name }}</span>
+            <span class="picker-row__name">
+              {{ exercise.name }}
+              <span v-if="exercise.is_custom" class="picker-row__custom">custom</span>
+            </span>
             <span class="picker-row__meta">
               {{ MUSCLE_LABELS[exercise.primary_muscle] }} ·
               {{ EQUIPMENT_LABELS[exercise.equipment] }}
@@ -95,6 +115,12 @@ function confirmSelection(): void {
     </ul>
     <p v-else class="picker-empty">No exercises match your search.</p>
   </ModalSheet>
+
+  <ExerciseEditor
+    v-if="newExerciseOpen"
+    @close="newExerciseOpen = false"
+    @save="saveNewExercise"
+  />
 </template>
 
 <style scoped>
@@ -113,6 +139,35 @@ function confirmSelection(): void {
 
 .picker-confirm:not(:disabled):active {
   background-color: var(--color-surface-raised);
+}
+
+.picker-new {
+  width: 100%;
+  min-height: var(--touch-target-min);
+  margin-bottom: var(--space-3);
+  background-color: transparent;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+.picker-new:active {
+  background-color: var(--color-surface);
+}
+
+.picker-row__custom {
+  display: inline-block;
+  margin-left: var(--space-2);
+  padding: 0 var(--space-2);
+  background-color: var(--color-surface-raised);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-dim);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  vertical-align: 2px;
 }
 
 .picker-search {
