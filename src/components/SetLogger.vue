@@ -115,6 +115,44 @@ function commitField(set: WorkoutSet, field: 'weight' | 'reps', event: Event): v
     input.value = String(set[field])
   }
 }
+
+function addDrop(set: WorkoutSet): void {
+  const existing = set.drop_segments ?? []
+  const last = existing.at(-1)
+  const seedWeight = last !== undefined ? last.weight : set.weight
+  const seedReps = last !== undefined ? last.reps : set.reps
+  const step = (gymStore.active?.unit ?? settingsStore.unit) === 'kg' ? 5 : 10
+  const dropWeight = Math.max(0, seedWeight - step)
+  void workoutsStore.editSet({
+    ...set,
+    drop_segments: [...existing, { weight: dropWeight, reps: seedReps }],
+  })
+}
+
+function removeDrop(set: WorkoutSet, segmentIndex: number): void {
+  const remaining = (set.drop_segments ?? []).filter((_, i) => i !== segmentIndex)
+  void workoutsStore.editSet({ ...set, drop_segments: remaining })
+}
+
+function commitDropField(
+  set: WorkoutSet,
+  segmentIndex: number,
+  field: 'weight' | 'reps',
+  event: Event,
+): void {
+  const input = event.target as HTMLInputElement
+  const value = Number(input.value)
+  const segments = set.drop_segments ?? []
+  const current = segments[segmentIndex]
+  if (current === undefined) return
+  if (!Number.isFinite(value) || value < 0) {
+    input.value = String(current[field])
+    return
+  }
+  const clean = field === 'reps' ? Math.floor(value) : value
+  const next = segments.map((seg, i) => (i === segmentIndex ? { ...seg, [field]: clean } : seg))
+  void workoutsStore.editSet({ ...set, drop_segments: next })
+}
 </script>
 
 <template>
@@ -146,35 +184,78 @@ function commitField(set: WorkoutSet, field: 'weight' | 'reps', event: Event): v
         <span>Reps</span>
         <span aria-hidden="true"></span>
       </div>
-      <div v-for="(set, index) in sets" :key="set.id" class="set-logger__row">
-        <span class="set-logger__num">{{ index + 1 }}</span>
-        <input
-          class="set-logger__input"
-          type="text"
-          inputmode="decimal"
-          :value="set.weight"
-          :aria-label="`Set ${index + 1} weight`"
-          @change="commitField(set, 'weight', $event)"
-        />
-        <input
-          class="set-logger__input"
-          type="text"
-          inputmode="numeric"
-          :value="set.reps"
-          :aria-label="`Set ${index + 1} reps`"
-          @change="commitField(set, 'reps', $event)"
-        />
-        <button
-          type="button"
-          class="set-logger__remove"
-          :aria-label="`Remove set ${index + 1}`"
-          @click="removeSet(set.id)"
+      <template v-for="(set, index) in sets" :key="set.id">
+        <div class="set-logger__row">
+          <span class="set-logger__num">{{ index + 1 }}</span>
+          <input
+            class="set-logger__input"
+            type="text"
+            inputmode="decimal"
+            :value="set.weight"
+            :aria-label="`Set ${index + 1} weight`"
+            @change="commitField(set, 'weight', $event)"
+          />
+          <input
+            class="set-logger__input"
+            type="text"
+            inputmode="numeric"
+            :value="set.reps"
+            :aria-label="`Set ${index + 1} reps`"
+            @change="commitField(set, 'reps', $event)"
+          />
+          <button
+            type="button"
+            class="set-logger__remove"
+            :aria-label="`Remove set ${index + 1}`"
+            @click="removeSet(set.id)"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+        </div>
+        <div
+          v-for="(drop, dIdx) in (set.drop_segments ?? [])"
+          :key="`${set.id}-drop-${dIdx}`"
+          class="set-logger__row set-logger__row--drop"
         >
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M6 6l12 12M18 6L6 18" />
-          </svg>
+          <span class="set-logger__num set-logger__num--drop" aria-hidden="true">↳</span>
+          <input
+            class="set-logger__input"
+            type="text"
+            inputmode="decimal"
+            :value="drop.weight"
+            :aria-label="`Set ${index + 1} drop ${dIdx + 1} weight`"
+            @change="commitDropField(set, dIdx, 'weight', $event)"
+          />
+          <input
+            class="set-logger__input"
+            type="text"
+            inputmode="numeric"
+            :value="drop.reps"
+            :aria-label="`Set ${index + 1} drop ${dIdx + 1} reps`"
+            @change="commitDropField(set, dIdx, 'reps', $event)"
+          />
+          <button
+            type="button"
+            class="set-logger__remove"
+            :aria-label="`Remove drop ${dIdx + 1} from set ${index + 1}`"
+            @click="removeDrop(set, dIdx)"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+        </div>
+        <button
+          v-if="set.weight > 0 && set.reps > 0"
+          type="button"
+          class="set-logger__drop-add"
+          @click="addDrop(set)"
+        >
+          + Drop set
         </button>
-      </div>
+      </template>
     </div>
 
     <div class="set-logger__actions">
@@ -269,6 +350,31 @@ function commitField(set: WorkoutSet, field: 'weight' | 'reps', event: Event): v
 
 .set-logger__row {
   margin-bottom: var(--space-2);
+}
+
+.set-logger__row--drop {
+  margin-top: calc(-1 * var(--space-1));
+  margin-left: var(--space-3);
+  margin-bottom: var(--space-1);
+  opacity: 0.85;
+}
+
+.set-logger__num--drop {
+  color: var(--color-accent);
+}
+
+.set-logger__drop-add {
+  margin-left: var(--space-3);
+  margin-bottom: var(--space-2);
+  padding: 0 var(--space-2);
+  background-color: transparent;
+  color: var(--color-text-faint);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+.set-logger__drop-add:active {
+  color: var(--color-accent);
 }
 
 .set-logger__num {

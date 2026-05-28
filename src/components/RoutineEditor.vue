@@ -74,6 +74,18 @@ function onTargetChange(index: number, field: 'target_sets' | 'target_reps', eve
   else updateExercise(index, { target_reps: Math.min(value, 99) })
 }
 
+function onRoundsChange(index: number, event: Event): void {
+  const input = event.target as HTMLInputElement
+  const current = exercises.value[index]
+  if (current === undefined) return
+  const value = Math.floor(Number(input.value))
+  if (!Number.isFinite(value) || value < 1) {
+    input.value = String(current.rounds ?? 1)
+    return
+  }
+  updateExercise(index, { rounds: Math.min(value, 20) })
+}
+
 function onPickerConfirm(ids: string[]): void {
   exercises.value = [
     ...exercises.value,
@@ -250,6 +262,16 @@ async function handleDelete(): Promise<void> {
                 @change="toggleSuperset(index)"
               />
               <span>Superset with previous exercise</span>
+            </label>
+            <label v-if="row.group_id !== undefined" class="editor-scheme__rounds">
+              <span class="editor-scheme__field-label">Rounds (circuit)</span>
+              <input
+                class="editor-scheme__input"
+                type="text"
+                inputmode="numeric"
+                :value="row.rounds ?? 1"
+                @change="onRoundsChange(index, $event)"
+              />
             </label>
           </div>
         </li>
@@ -484,6 +506,22 @@ async function handleDelete(): Promise<void> {
   width: 18px;
   height: 18px;
   accent-color: var(--color-accent);
+}
+
+.editor-scheme__rounds {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.editor-scheme__rounds .editor-scheme__field-label {
+  flex: 1;
+}
+
+.editor-scheme__rounds .editor-scheme__input {
+  width: 80px;
+  text-align: center;
 }
 
 .editor-empty {

@@ -92,6 +92,10 @@ export interface RoutineExercise {
   target_reps: number
   /** When set, exercises sharing this id are a superset block in the routine. */
   group_id?: string
+  /** Rounds for a circuit (only meaningful when grouped). Defaults to 1 — a
+   *  plain superset. A value > 1 means start pre-creates target_sets * rounds
+   *  set rows for this exercise. */
+  rounds?: number
 }
 
 export interface Routine extends SyncedRecord {
@@ -130,6 +134,12 @@ export interface Workout extends SyncedRecord {
   exercise_count: number
 }
 
+/** One segment of a drop set, performed after the main weight × reps. */
+export interface DropSegment {
+  weight: number
+  reps: number
+}
+
 /** A single logged set. Named `WorkoutSet` to avoid clashing with the JS `Set`. */
 export interface WorkoutSet extends SyncedRecord {
   workout_id: string
@@ -143,6 +153,9 @@ export interface WorkoutSet extends SyncedRecord {
   is_warmup: boolean
   is_pr: boolean
   completed_at: number | null
+  /** Additional drop-set segments after the main weight × reps. When set,
+   *  the set's volume sums across the main set and every segment. */
+  drop_segments?: DropSegment[]
 }
 
 export interface PersonalRecord extends SyncedRecord {

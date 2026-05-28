@@ -4,9 +4,15 @@ import type { WorkoutSet } from '@/db/schema'
  * single unit (lb), so no unit normalization is needed yet; revisit when a
  * kg input option is added. */
 
-/** Volume of a single set. */
+/** Volume of a single set, including every drop-set segment when present. */
 export function setVolume(set: WorkoutSet): number {
-  return set.weight * set.reps
+  let total = set.weight * set.reps
+  if (set.drop_segments !== undefined) {
+    for (const segment of set.drop_segments) {
+      total += segment.weight * segment.reps
+    }
+  }
+  return total
 }
 
 /** Total volume across a list of sets. */

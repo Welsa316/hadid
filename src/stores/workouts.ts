@@ -120,7 +120,8 @@ export const useWorkoutsStore = defineStore('workouts', () => {
         const last = await getLastSetForExercise(entry.exercise_id)
         const weight =
           last !== undefined && last.weight_unit === workout.weight_unit ? last.weight : 0
-        for (let number = 1; number <= entry.target_sets; number += 1) {
+        const totalSets = entry.target_sets * (entry.rounds ?? 1)
+        for (let number = 1; number <= totalSets; number += 1) {
           sets.push({
             id: uuidv7(),
             workout_id: workout.id,

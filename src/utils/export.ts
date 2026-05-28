@@ -64,6 +64,7 @@ function buildCsv(bundle: ExportBundle): string {
     'reps',
     'is_warmup',
     'is_pr',
+    'drop_chain',
   ].join(',')
 
   const ordered = [...bundle.sets].sort((a, b) => {
@@ -77,6 +78,10 @@ function buildCsv(bundle: ExportBundle): string {
   const rows = ordered.map((set) => {
     const workout = workoutById.get(set.workout_id)
     const exercise = exerciseById.get(set.exercise_id)
+    const dropChain =
+      set.drop_segments !== undefined && set.drop_segments.length > 0
+        ? set.drop_segments.map((segment) => `${segment.weight}x${segment.reps}`).join('|')
+        : ''
     return [
       csvCell(set.workout_id),
       csvCell(workout?.local_date),
@@ -88,6 +93,7 @@ function buildCsv(bundle: ExportBundle): string {
       csvCell(set.reps),
       csvCell(set.is_warmup),
       csvCell(set.is_pr),
+      csvCell(dropChain),
     ].join(',')
   })
 

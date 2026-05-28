@@ -125,7 +125,13 @@ async function saveEditedTime(payload: { startedAt: number; endedAt: number }): 
           <h2 class="detail-exercise__name">{{ group.name }}</h2>
           <div v-for="(set, index) in group.sets" :key="set.id" class="detail-set">
             <span class="detail-set__num">{{ index + 1 }}</span>
-            <span class="detail-set__value">{{ set.weight }} {{ set.weight_unit }} × {{ set.reps }}</span>
+            <span class="detail-set__value">
+              {{ set.weight }} {{ set.weight_unit }} × {{ set.reps }}<template
+                v-for="(drop, dIdx) in (set.drop_segments ?? [])"
+                :key="`${set.id}-d-${dIdx}`"
+              >
+                <span class="detail-set__drop"> → {{ drop.weight }} × {{ drop.reps }}</span></template>
+            </span>
             <PRBadge v-if="set.is_pr" />
           </div>
         </section>
@@ -260,6 +266,11 @@ async function saveEditedTime(payload: { startedAt: number; endedAt: number }): 
 .detail-set__value {
   flex: 1;
   font-weight: 600;
+}
+
+.detail-set__drop {
+  color: var(--color-text-dim);
+  font-weight: 500;
 }
 
 .detail-pr-banner {
