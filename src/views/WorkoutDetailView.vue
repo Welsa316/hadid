@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { RouterLink, useRoute, useRouter } from 'vue-router'
 
 import PRBadge from '@/components/PRBadge.vue'
 import WorkoutTimeSheet from '@/components/WorkoutTimeSheet.vue'
@@ -120,6 +120,11 @@ async function saveEditedTime(payload: { startedAt: number; endedAt: number }): 
         <p v-if="prCount > 0" class="detail-pr-banner">
           {{ prCount }} new personal {{ prCount === 1 ? 'record' : 'records' }}
         </p>
+
+        <RouterLink to="/body" class="detail-body-link">
+          <span>See this workout in your weekly muscle volume</span>
+          <span aria-hidden="true">→</span>
+        </RouterLink>
 
         <section v-for="group in exerciseGroups" :key="group.id" class="detail-exercise">
           <h2 class="detail-exercise__name">{{ group.name }}</h2>
@@ -281,6 +286,28 @@ async function saveEditedTime(payload: { startedAt: number; endedAt: number }): 
   color: var(--color-on-accent);
   font-weight: 700;
   text-align: center;
+}
+
+.detail-body-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+.detail-body-link:active {
+  background-color: var(--color-surface-raised);
+}
+
+.detail-body-link span:last-child {
+  color: var(--color-accent);
 }
 
 .detail-notes {
